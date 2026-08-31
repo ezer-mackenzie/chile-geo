@@ -1,4 +1,4 @@
-import type { PolygonCoordinates, Position, RegionFeature, RegionFeatureCollection } from '../types';
+import type { PolygonCoordinates, Position, RegionFeature, RegionFeatureCollection } from '../types/index.js';
 
 export interface Bounds { minX: number; minY: number; maxX: number; maxY: number }
 export interface ViewportTransform { scale: number; offsetX: number; offsetY: number; height: number }

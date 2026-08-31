@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import topography from '../assets/chile-topography.json';
-import type { Map3DOptions, PolygonCoordinates, RegionData, RegionFeatureCollection } from '../types';
-import { getBounds, metricColor, normalizedValue, polygonsOf } from './geometry';
+import type { Map3DOptions, PolygonCoordinates, RegionData, RegionFeatureCollection } from '../types/index.js';
+import { finitePositiveOption, prepareDataSeries } from './data.js';
+import { getBounds, metricColor, normalizedValue, polygonsOf } from './geometry.js';
 
 const geography = topography as RegionFeatureCollection;
 const bounds = getBounds(geography);
@@ -24,14 +25,17 @@ export class Chile3DMap {
   private readonly resizeObserver: ResizeObserver;
   private readonly controls?: OrbitControls;
   private animationFrame = 0;
+  private focusedIndex = 0;
   private hoveredId: string | undefined;
   private destroyed = false;
 
   constructor(options: Map3DOptions) {
     if (!options.container) throw new TypeError('Chile3DMap requires a container element.');
-    this.options = options;
+    this.options = { ...options, maxExtrusionDepth: finitePositiveOption(options.maxExtrusionDepth, 3, 'maxExtrusionDepth') };
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.domElement.setAttribute('aria-label', 'Interactive 3D map of Chile');
+    this.renderer.domElement.setAttribute('role', 'img');
+    this.renderer.domElement.tabIndex = 0;
     this.renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none';
     options.container.append(this.renderer.domElement);
     this.mainGroup.name = 'ChileMainGroup';
@@ -45,6 +49,7 @@ export class Chile3DMap {
     if (options.enableControls) {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
+      this.controls.addEventListener('change', this.render);
       this.controls.target.set(0, 0, 0);
     }
     this.createRegions();
@@ -53,14 +58,16 @@ export class Chile3DMap {
     this.renderer.domElement.addEventListener('pointermove', this.handlePointerMove);
     this.renderer.domElement.addEventListener('pointerleave', this.handlePointerLeave);
     this.renderer.domElement.addEventListener('click', this.handleClick);
+    this.renderer.domElement.addEventListener('keydown', this.handleKeyDown);
     this.resize();
-    this.animate();
+    if (this.controls) this.animate(); else this.render();
   }
 
   updateData(dataSeries: RegionData[]): void {
+    const prepared = prepareDataSeries(dataSeries, geography);
     this.data.clear();
-    for (const item of dataSeries) this.data.set(item.id, { ...item });
-    const maximum = Math.max(0, ...dataSeries.map((item) => item.value));
+    for (const [id, item] of prepared.byId) this.data.set(id, item);
+    const maximum = prepared.maximum;
     for (const [id, group] of this.regions) {
       const item = this.data.get(id);
       group.userData.metric = item;
@@ -72,6 +79,7 @@ export class Chile3DMap {
         mesh.material.color.set(item?.color ?? metricColor(item?.value ?? 0, maximum, this.options.defaultColor ?? '#94a3b8'));
       }
     }
+    this.render();
   }
 
   destroy(): void {
@@ -80,9 +88,11 @@ export class Chile3DMap {
     cancelAnimationFrame(this.animationFrame);
     this.resizeObserver.disconnect();
     this.controls?.dispose();
+    this.controls?.removeEventListener('change', this.render);
     this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove);
     this.renderer.domElement.removeEventListener('pointerleave', this.handlePointerLeave);
     this.renderer.domElement.removeEventListener('click', this.handleClick);
+    this.renderer.domElement.removeEventListener('keydown', this.handleKeyDown);
     this.mainGroup.traverse((object) => {
       if (object instanceof THREE.Mesh) { object.geometry.dispose(); (object.material as THREE.Material).dispose(); }
     });
@@ -122,13 +132,16 @@ export class Chile3DMap {
     this.camera.updateProjectionMatrix();
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
     this.renderer.setSize(safeWidth, safeHeight, false);
+    this.render();
   };
+
+  private readonly render = (): void => { if (!this.destroyed) this.renderer.render(this.scene, this.camera); };
 
   private animate = (): void => {
     if (this.destroyed) return;
     this.animationFrame = requestAnimationFrame(this.animate);
     this.controls?.update();
-    this.renderer.render(this.scene, this.camera);
+    this.render();
   };
 
   private intersect(event: PointerEvent | MouseEvent): THREE.Object3D | undefined {
@@ -152,5 +165,21 @@ export class Chile3DMap {
     const id = this.intersect(event)?.userData['regionId'] as string | undefined;
     const region = id ? this.regions.get(id) : undefined;
     if (id && region) this.options.onRegionClick?.(region.userData.regionName, this.data.get(id));
+  };
+  private readonly handleKeyDown = (event: KeyboardEvent): void => {
+    if (!['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'Enter', ' '].includes(event.key)) return;
+    event.preventDefault();
+    if (event.key === 'Enter' || event.key === ' ') {
+      const feature = geography.features[this.focusedIndex];
+      if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+      return;
+    }
+    const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
+    this.focusedIndex = (this.focusedIndex + direction + geography.features.length) % geography.features.length;
+    const feature = geography.features[this.focusedIndex];
+    if (feature) {
+      this.renderer.domElement.setAttribute('aria-label', `Interactive 3D map of Chile. Selected: ${feature.properties.name}`);
+      this.options.onRegionHover?.(feature.properties.name, this.data.get(feature.properties.id));
+    }
   };
 }

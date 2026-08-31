@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 
 const source = process.argv[2] ?? join(import.meta.dir, '../packages/data-geojson/dist/regions.geojson');
 const target = join(import.meta.dir, '../packages/map-render/src/assets/chile-topography.json');
+const metadataTarget = join(import.meta.dir, '../packages/map-render/src/assets/chile-topography.meta.json');
 const isoByCode: Record<string, string> = {
   '1': 'CL-TA', '2': 'CL-AN', '3': 'CL-AT', '4': 'CL-CO', '5': 'CL-VS', '6': 'CL-LI',
   '7': 'CL-ML', '8': 'CL-BI', '9': 'CL-AR', '10': 'CL-LL', '11': 'CL-AI', '12': 'CL-MA',
@@ -46,5 +47,14 @@ const output = {
 };
 
 await mkdir(dirname(target), { recursive: true });
-await Bun.write(target, JSON.stringify(output));
+const serialized = JSON.stringify(output);
+await Bun.write(target, serialized);
+await Bun.write(metadataTarget, `${JSON.stringify({
+  source: 'Biblioteca del Congreso Nacional de Chile (BCN)',
+  sourceSnapshotDate: '2026-08-31',
+  coordinateReferenceSystem: 'WGS84',
+  coordinatePrecision: 4,
+  featureCount: output.features.length,
+  sha256: new Bun.CryptoHasher('sha256').update(serialized).digest('hex'),
+}, null, 2)}\n`);
 console.log(`Wrote ${output.features.length} regions to ${target}`);

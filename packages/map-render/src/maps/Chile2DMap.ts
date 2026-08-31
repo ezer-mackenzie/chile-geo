@@ -1,6 +1,7 @@
 import topography from '../assets/chile-topography.json';
-import type { Map2DOptions, RegionData, RegionFeature, RegionFeatureCollection } from '../types';
-import { createViewportTransform, getBounds, metricColor, polygonsOf, project } from './geometry';
+import type { Map2DOptions, RegionData, RegionFeature, RegionFeatureCollection } from '../types/index.js';
+import { finiteNonNegativeOption, finitePositiveOption, prepareDataSeries } from './data.js';
+import { createViewportTransform, getBounds, metricColor, polygonsOf, project } from './geometry.js';
 
 const geography = topography as RegionFeatureCollection;
 
@@ -13,14 +14,20 @@ export class Chile2DMap {
   private readonly resizeObserver: ResizeObserver;
   private frame: number | undefined;
   private hovered: RegionFeature | undefined;
+  private focusedIndex = 0;
   private destroyed = false;
 
   constructor(options: Map2DOptions) {
     if (!options.container) throw new TypeError('Chile2DMap requires a container element.');
-    this.options = options;
+    this.options = {
+      ...options,
+      pixelRatio: Math.min(finitePositiveOption(options.pixelRatio, window.devicePixelRatio || 1, 'pixelRatio'), 3),
+      strokeWidth: finiteNonNegativeOption(options.strokeWidth, 0.75, 'strokeWidth'),
+    };
     this.canvas = document.createElement('canvas');
     this.canvas.setAttribute('aria-label', 'Interactive map of Chile');
     this.canvas.setAttribute('role', 'img');
+    this.canvas.tabIndex = 0;
     this.canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:none';
     const context = this.canvas.getContext('2d');
     if (!context) throw new Error('Canvas 2D is not supported by this browser.');
@@ -31,12 +38,14 @@ export class Chile2DMap {
     this.canvas.addEventListener('pointermove', this.handlePointerMove);
     this.canvas.addEventListener('pointerleave', this.handlePointerLeave);
     this.canvas.addEventListener('click', this.handleClick);
+    this.canvas.addEventListener('keydown', this.handleKeyDown);
     this.scheduleDraw();
   }
 
   updateData(dataSeries: RegionData[]): void {
+    const prepared = prepareDataSeries(dataSeries, geography);
     this.data.clear();
-    for (const item of dataSeries) this.data.set(item.id, { ...item });
+    for (const [id, item] of prepared.byId) this.data.set(id, item);
     this.scheduleDraw();
   }
 
@@ -48,6 +57,7 @@ export class Chile2DMap {
     this.canvas.removeEventListener('pointermove', this.handlePointerMove);
     this.canvas.removeEventListener('pointerleave', this.handlePointerLeave);
     this.canvas.removeEventListener('click', this.handleClick);
+    this.canvas.removeEventListener('keydown', this.handleKeyDown);
     this.canvas.remove();
   }
 
@@ -60,7 +70,7 @@ export class Chile2DMap {
     const rect = this.options.container.getBoundingClientRect();
     const width = Math.max(1, rect.width);
     const height = Math.max(1, rect.height);
-    const ratio = this.options.pixelRatio ?? window.devicePixelRatio ?? 1;
+    const ratio = this.options.pixelRatio ?? 1;
     this.canvas.width = Math.round(width * ratio);
     this.canvas.height = Math.round(height * ratio);
     this.context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -105,5 +115,21 @@ export class Chile2DMap {
   private readonly handleClick = (event: MouseEvent): void => {
     const feature = this.featureAt(event);
     if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+  };
+  private readonly handleKeyDown = (event: KeyboardEvent): void => {
+    if (!['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'Enter', ' '].includes(event.key)) return;
+    event.preventDefault();
+    if (event.key === 'Enter' || event.key === ' ') {
+      const feature = geography.features[this.focusedIndex];
+      if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+      return;
+    }
+    const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
+    this.focusedIndex = (this.focusedIndex + direction + geography.features.length) % geography.features.length;
+    const feature = geography.features[this.focusedIndex];
+    if (feature) {
+      this.canvas.setAttribute('aria-label', `Interactive map of Chile. Selected: ${feature.properties.name}`);
+      this.options.onRegionHover?.(feature.properties.name, this.data.get(feature.properties.id));
+    }
   };
 }

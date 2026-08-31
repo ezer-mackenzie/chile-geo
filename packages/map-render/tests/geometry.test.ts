@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import topography from '../src/assets/chile-topography.json';
+import metadata from '../src/assets/chile-topography.meta.json';
 import type { RegionFeatureCollection } from '../src/types';
 import { createViewportTransform, getBounds, metricColor, normalizedValue, polygonsOf, project } from '../src/maps/geometry';
 
@@ -14,13 +15,27 @@ describe('bundled geography', () => {
       expect(feature.properties.name.length).toBeGreaterThan(0);
       expect(feature.properties.name.endsWith('Region')).toBe(true);
       expect(polygonsOf(feature).length).toBeGreaterThan(0);
+      for (const polygon of polygonsOf(feature)) for (const ring of polygon) {
+        expect(ring.length).toBeGreaterThanOrEqual(4);
+        expect(ring[0]).toEqual(ring.at(-1));
+        for (const [longitude, latitude] of ring) {
+          expect(Number.isFinite(longitude) && longitude >= -180 && longitude <= 180).toBe(true);
+          expect(Number.isFinite(latitude) && latitude >= -90 && latitude <= 90).toBe(true);
+        }
+      }
     }
+    expect(metadata.featureCount).toBe(geography.features.length);
   });
 
   test('keeps coordinate precision at four decimal places or fewer', () => {
     for (const feature of geography.features) for (const polygon of polygonsOf(feature)) for (const ring of polygon) {
       for (const coordinate of ring.flat()) expect(String(coordinate).split('.')[1]?.length ?? 0).toBeLessThanOrEqual(4);
     }
+  });
+
+  test('matches the generated SHA-256 metadata', async () => {
+    const source = await Bun.file(new URL('../src/assets/chile-topography.json', import.meta.url)).text();
+    expect(new Bun.CryptoHasher('sha256').update(source).digest('hex')).toBe(metadata.sha256);
   });
 });
 

@@ -84,7 +84,7 @@ export interface Map3DOptions extends BaseMapOptions {
 - Initialize a `THREE.Scene`, `THREE.PerspectiveCamera`, and a `THREE.WebGLRenderer` inside the specified DOM container.
 - Create a root `THREE.Group` named `ChileMainGroup`. Every region component must be a child `THREE.Group` or discrete `THREE.Mesh` instance inside it.
 - Store transactional metrics inside the native mesh allocation dictionary: `mesh.userData = dataSeriesItem`.
-- **Dynamic Extrusion Lógica**: Map coordinates into a `THREE.Shape`. Pass it through `THREE.ExtrudeGeometry` where the `depth` setting is bound to the metric value `value * structuralModifier`. Cap this depth utilizing `options.maxExtrusionDepth`.
+- **Dynamic Extrusion Logic**: Map coordinates into a `THREE.Shape`. Pass it through `THREE.ExtrudeGeometry` where the `depth` setting is bound to the metric value `value * structuralModifier`. Cap this depth utilizing `options.maxExtrusionDepth`.
 - Implement interaction hooks via a clean `THREE.Raycaster` routine listening to local mouse vectors. Trigger `onRegionClick` or `onRegionHover` callbacks accordingly.
 
 ---

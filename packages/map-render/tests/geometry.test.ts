@@ -12,6 +12,7 @@ describe('bundled geography', () => {
     for (const feature of geography.features) {
       expect(feature.properties.id).toMatch(/^CL-[A-Z]{2}$/);
       expect(feature.properties.name.length).toBeGreaterThan(0);
+      expect(feature.properties.name.endsWith('Region')).toBe(true);
       expect(polygonsOf(feature).length).toBeGreaterThan(0);
     }
   });

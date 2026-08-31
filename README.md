@@ -43,8 +43,8 @@ const map = new Chile2DMap({
 });
 
 map.updateData([
-  { id: 'CL-RM', name: 'Región Metropolitana de Santiago', value: 92 },
-  { id: 'CL-VS', name: 'Región de Valparaíso', value: 67, color: '#7c3aed' },
+  { id: 'CL-RM', name: 'Santiago Metropolitan Region', value: 92 },
+  { id: 'CL-VS', name: 'Valparaíso Region', value: 67, color: '#7c3aed' },
 ]);
 ```
 
@@ -67,8 +67,8 @@ const map = new Chile3DMap({
 });
 
 map.updateData([
-  { id: 'CL-AP', name: 'Región de Arica y Parinacota', value: 12 },
-  { id: 'CL-MA', name: 'Región de Magallanes', value: 80 },
+  { id: 'CL-AP', name: 'Arica and Parinacota Region', value: 12 },
+  { id: 'CL-MA', name: 'Magallanes and Chilean Antarctica Region', value: 80 },
 ]);
 ```
 

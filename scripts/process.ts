@@ -27,7 +27,7 @@ const layers: LayerConfig[] = [
   },
   {
     zipName: 'Provinces.zip',
-    outputName: 'provincias',
+    outputName: 'provinces',
     rawFields: 'cod_prov,Provincia',
     renameTo: 'id=cod_prov,name=Provincia'
   },

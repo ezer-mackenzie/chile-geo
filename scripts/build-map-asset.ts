@@ -8,6 +8,24 @@ const isoByCode: Record<string, string> = {
   '7': 'CL-ML', '8': 'CL-BI', '9': 'CL-AR', '10': 'CL-LL', '11': 'CL-AI', '12': 'CL-MA',
   '13': 'CL-RM', '14': 'CL-LR', '15': 'CL-AP', '16': 'CL-NB',
 };
+const nameByIso: Record<string, string> = {
+  'CL-AI': 'Aysén Region',
+  'CL-AN': 'Antofagasta Region',
+  'CL-AP': 'Arica and Parinacota Region',
+  'CL-AR': 'Araucanía Region',
+  'CL-AT': 'Atacama Region',
+  'CL-BI': 'Biobío Region',
+  'CL-CO': 'Coquimbo Region',
+  'CL-LI': "O'Higgins Region",
+  'CL-LL': 'Los Lagos Region',
+  'CL-LR': 'Los Ríos Region',
+  'CL-MA': 'Magallanes and Chilean Antarctica Region',
+  'CL-ML': 'Maule Region',
+  'CL-NB': 'Ñuble Region',
+  'CL-RM': 'Santiago Metropolitan Region',
+  'CL-TA': 'Tarapacá Region',
+  'CL-VS': 'Valparaíso Region',
+};
 
 interface RawFeatureCollection {
   type: 'FeatureCollection';
@@ -17,14 +35,14 @@ interface RawFeatureCollection {
 const input = await Bun.file(source).json() as RawFeatureCollection;
 const output = {
   type: 'FeatureCollection',
-  features: input.features.filter((feature) => String(feature.properties.id) !== '0').map((feature) => ({
-    type: 'Feature',
-    properties: {
-      id: isoByCode[String(feature.properties.id)] ?? `CL-${feature.properties.id}`,
-      name: feature.properties.name,
-    },
-    geometry: feature.geometry,
-  })),
+  features: input.features.filter((feature) => String(feature.properties.id) !== '0').map((feature) => {
+    const id = isoByCode[String(feature.properties.id)] ?? `CL-${feature.properties.id}`;
+    return {
+      type: 'Feature',
+      properties: { id, name: nameByIso[id] ?? feature.properties.name },
+      geometry: feature.geometry,
+    };
+  }),
 };
 
 await mkdir(dirname(target), { recursive: true });

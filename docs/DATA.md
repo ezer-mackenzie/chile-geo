@@ -14,7 +14,7 @@ The renderer asset is produced by reprojecting source shapefiles to WGS84, simpl
 - It is suitable for dashboards and thematic maps, not cadastral, navigation, surveying, or legal boundary work.
 - Offshore polygons and detailed coastlines may be generalized.
 - Administrative boundaries can change. Record the package version when reproducibility matters.
-- Official geographic names remain Spanish; source code, APIs, and documentation are English.
+- Bundled region labels use standardized English names. Spanish source-field identifiers are read only where required by the BCN input schema.
 
 ## Updating the snapshot
 

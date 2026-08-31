@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "geo-chile",
+      "name": "@chile-geo/workspace",
       "devDependencies": {
         "@arethetypeswrong/cli": "latest",
         "@changesets/cli": "latest",
@@ -23,11 +23,11 @@
     },
     "packages/data-geojson": {
       "name": "@chile-geo/data-geojson",
-      "version": "1.0.0",
+      "version": "0.1.0",
     },
     "packages/data-topojson": {
       "name": "@chile-geo/data-topojson",
-      "version": "1.0.0",
+      "version": "0.1.0",
     },
     "packages/map-render": {
       "name": "@chile-geo/maps",

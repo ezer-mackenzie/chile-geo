@@ -24,6 +24,7 @@
   "peerDependencies": {
     "three": ">=0.150.0"
   },
+  "peerDependenciesMeta": { "three": { "optional": true } },
   "devDependencies": { "three": "^0.185.1" },
   "files": ["dist", "README.md"],
   "sideEffects": false,

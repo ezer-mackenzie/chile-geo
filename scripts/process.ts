@@ -53,13 +53,13 @@ async function processLayer(config: LayerConfig) {
     return;
   }
 
-  console.log(`\n🚀 Extracting and optimizing ${config.zipName}...`);
+  console.log(`\nExtracting and optimizing ${config.zipName}...`);
 
-  // 1. Descomprimir usando el comando de sistema nativo mediante Bun (evita fallos de adm-zip)
   const layerTmpDir = join(TMP_DIR, config.outputName);
   if (!existsSync(layerTmpDir)) mkdirSync(layerTmpDir, { recursive: true });
   
-  await Bun.spawn(['unzip', '-o', zipPath, '-d', layerTmpDir]).exited;
+  const unzipCode = await Bun.spawn(['unzip', '-o', zipPath, '-d', layerTmpDir]).exited;
+  if (unzipCode !== 0) throw new Error(`Could not extract ${config.zipName}.`);
 
   const geojsonPath = join(GEOJSON_OUT_DIR, `${config.outputName}.geojson`);
   const topojsonPath = join(TOPOJSON_OUT_DIR, `${config.outputName}.topojson`);
@@ -68,7 +68,7 @@ async function processLayer(config: LayerConfig) {
     'bunx', 'mapshaper',
     join(layerTmpDir, '*.shp'),
     '-proj', 'wgs84', 
-    '-simplify', '15%',
+    '-simplify', '2%', 'keep-shapes',
     '-filter-fields', config.rawFields,
     '-rename-fields', config.renameTo,
     '-o', geojsonPath, 'format=geojson', 'precision=0.0001', 'no-quantization',
@@ -76,9 +76,10 @@ async function processLayer(config: LayerConfig) {
   ];
 
   const process = Bun.spawn(mapshaperArgs);
-  await process.exited;
+  const exitCode = await process.exited;
+  if (exitCode !== 0) throw new Error(`Mapshaper failed for ${config.zipName}.`);
 
-  console.log(`✅ Successfully generated files for ${config.outputName}`);
+  console.log(`Generated files for ${config.outputName}.`);
 }
 
 async function main() {
@@ -88,11 +89,13 @@ async function main() {
     await processLayer(layer);
   }
 
-  // Limpiar la carpeta temporal al finalizar
-  console.log('\n🧹 Cleaning up temporary extraction files...');
+  console.log('\nCleaning up temporary extraction files...');
   rmSync(TMP_DIR, { recursive: true, force: true });
 
-  console.log('\n🎉 Pipeline complete! All geographic datasets are perfectly optimized.');
+  console.log('\nPipeline complete.');
 }
 
-main();
+main().catch((error: unknown) => {
+  console.error(error);
+  process.exitCode = 1;
+});

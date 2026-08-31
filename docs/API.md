@@ -41,6 +41,8 @@ Import from `@chile-geo/maps/3d`. The application must provide the `three` peer 
 
 Each intersectable mesh stores `regionId`, `regionName`, and supplied metric fields in `mesh.userData`.
 
+Both renderer elements are keyboard-focusable. Arrow keys change the active region; Enter or Space invokes `onRegionClick`. Invalid positive-only numeric options throw `RangeError`. Unknown metric IDs are ignored with a warning, invalid values become zero, and the last duplicate ID wins.
+
 ## Lifecycle guidance
 
 Create one map per host element. Reuse it through repeated `updateData` calls. Invoke `destroy` when a route, component, or dashboard widget is unmounted. Do not call methods after destruction.

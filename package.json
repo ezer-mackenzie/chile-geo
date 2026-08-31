@@ -17,6 +17,7 @@
     "docs:dev": "vitepress dev website",
     "docs:build": "vitepress build website",
     "docs:preview": "vitepress preview website",
+    "release:check": "bun run scripts/verify-release.ts",
     "verify": "bun run check && bun test && bun run build && bun run check:bundle && bun run test:package && bun run test:browser && bun run docs:build",
     "process-data": "bun run ./scripts/process.ts"
   },

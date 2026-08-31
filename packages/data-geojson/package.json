@@ -1,7 +1,8 @@
 {
-  "name": "@geo-chile/data-geojson",
+  "name": "@chile-geo/data-geojson",
   "version": "1.0.0",
   "description": "Pure, optimized GeoJSON datasets of Chile for any programming language",
+  "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

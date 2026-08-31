@@ -1,7 +1,7 @@
 {
   "name": "@chile-geo/maps",
   "version": "0.1.0",
-  "description": "TypeScript 2D/3D dual rendering engine for Chile geographic maps",
+  "description": "Typed Canvas and Three.js maps for Chilean geographic analytics",
   "type": "module",
   "main": "./dist/index.umd.cjs",
   "module": "./dist/index.js",
@@ -26,7 +26,10 @@
   "peerDependenciesMeta": { "three": { "optional": true } },
   "devDependencies": { "three": "^0.185.1" },
   "files": ["dist", "README.md"],
+  "keywords": ["chile", "map", "canvas", "threejs", "geojson", "typescript", "visualization"],
+  "author": "Eli-ezer Reuven Ramirez Ruiz",
   "sideEffects": false,
   "license": "MIT",
-  "engines": { "node": ">=18.0.0" }
+  "engines": { "node": ">=18.0.0" },
+  "publishConfig": { "access": "public", "provenance": true }
 }

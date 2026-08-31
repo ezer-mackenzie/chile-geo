@@ -22,11 +22,11 @@
       },
     },
     "packages/data-geojson": {
-      "name": "@geo-chile/data-geojson",
+      "name": "@chile-geo/data-geojson",
       "version": "1.0.0",
     },
     "packages/data-topojson": {
-      "name": "@geo-chile/data-topojson",
+      "name": "@chile-geo/data-topojson",
       "version": "1.0.0",
     },
     "packages/map-render": {
@@ -36,7 +36,7 @@
         "three": "^0.185.1",
       },
       "peerDependencies": {
-        "three": ">=0.150.0",
+        "three": ">=0.180.0 <0.186.0",
       },
       "optionalPeers": [
         "three",
@@ -92,6 +92,10 @@
 
     "@changesets/write": ["@changesets/write@1.0.1", "", { "dependencies": { "@changesets/format": "^0.1.1", "@changesets/types": "^7.0.0", "human-id": "^4.2.0" } }, "sha512-q/ThtP9gcnEP6xlv7LrY26C2mHqdGBti/MmOVngt/M/oIGYkssmQGxPK9WzBNt2juVcH/vml2WQ+ra8LXYOTaA=="],
 
+    "@chile-geo/data-geojson": ["@chile-geo/data-geojson@workspace:packages/data-geojson"],
+
+    "@chile-geo/data-topojson": ["@chile-geo/data-topojson@workspace:packages/data-topojson"],
+
     "@chile-geo/maps": ["@chile-geo/maps@workspace:packages/map-render"],
 
     "@clack/core": ["@clack/core@1.4.3", "", { "dependencies": { "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-/kr3UWNtdJfxZtPgDqUOmG2pvwlmcLGheex5yiZKdwbzZJxhV+HMNR9QNmyY5cGwTNV6LrR7Jtp+KjhUAP1qBQ=="],
@@ -107,10 +111,6 @@
     "@docsearch/js": ["@docsearch/js@4.7.0", "", {}, "sha512-x5lCqu1tetgsJFkjQ6VSocbHldsRkGEgwg5N98Vx21sq/V5wcmj4u226PY9k+TEpIgQ772zlYbPLTPicWyGnpA=="],
 
     "@docsearch/sidepanel-js": ["@docsearch/sidepanel-js@4.7.0", "", {}, "sha512-A8r34jCU8kcIk2viECEn2msA28ojUF1BLi/3v5OWWc5G2N3jOuuumBXoeYjfr8dA0UxgFSy5R2bt12dnFJQSyA=="],
-
-    "@geo-chile/data-geojson": ["@geo-chile/data-geojson@workspace:packages/data-geojson"],
-
-    "@geo-chile/data-topojson": ["@geo-chile/data-topojson@workspace:packages/data-topojson"],
 
     "@iconify-json/simple-icons": ["@iconify-json/simple-icons@1.2.94", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-l8UWzVxKaqZd9ABsE/M/9p6NyGkQnmCnOoZyhQmjlXCtY5PuL2rcWxOFk2l9pk7ux3ERMPkTLE4jl6kQpTkwxA=="],
 

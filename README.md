@@ -2,6 +2,8 @@
 
 Typed, dependency-light geographic visualization for Chile. The workspace includes an HTML Canvas renderer and an optional Three.js renderer backed by a bundled, simplified snapshot of official Biblioteca del Congreso Nacional (BCN) boundaries.
 
+> Chile Geo is currently in the `0.x` development series. It is tested and release-gated, while its API may still evolve from real-world integration feedback before `1.0.0`.
+
 ## Highlights
 
 - All 16 Chilean regions, stored locally with four-decimal coordinate precision.
@@ -17,8 +19,8 @@ Typed, dependency-light geographic visualization for Chile. The workspace includ
 | Package | Purpose |
 | --- | --- |
 | `@chile-geo/maps` | Public 2D and 3D rendering APIs |
-| `@geo-chile/data-geojson` | Existing processed GeoJSON datasets |
-| `@geo-chile/data-topojson` | Existing processed TopoJSON datasets |
+| `@chile-geo/data-geojson` | Internal processed GeoJSON workspace |
+| `@chile-geo/data-topojson` | Internal processed TopoJSON workspace |
 
 ## Installation
 

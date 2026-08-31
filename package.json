@@ -2,6 +2,7 @@
   "name": "@chile-geo/workspace",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
@@ -9,16 +10,31 @@
     "build": "bun run --filter '*' build",
     "check": "bun run --filter '*' check",
     "test": "bun run --filter '*' test",
+    "test:browser": "playwright test --project=chromium --project=firefox",
+    "test:browser:all": "playwright test",
+    "test:package": "bun run scripts/verify-package.ts",
+    "check:bundle": "bun run scripts/check-bundle-size.ts",
+    "docs:dev": "vitepress dev website",
+    "docs:build": "vitepress build website",
+    "docs:preview": "vitepress preview website",
+    "verify": "bun run check && bun test && bun run build && bun run check:bundle && bun run test:package && bun run test:browser && bun run docs:build",
     "process-data": "bun run ./scripts/process.ts"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "latest",
+    "@changesets/cli": "latest",
+    "@playwright/test": "latest",
     "@types/bun": "latest",
     "@types/three": "^0.185.4",
+    "@vue/server-renderer": "latest",
     "mapshaper": "^0.7.56",
+    "publint": "latest",
     "three": "^0.185.1",
     "typescript": "^5.9.3",
     "vite": "^8.2.2",
-    "vite-plugin-dts": "^5.0.3"
+    "vite-plugin-dts": "^5.0.3",
+    "vitepress": "next",
+    "vue": "latest"
   },
   "engines": { "bun": ">=1.2.0" }
 }

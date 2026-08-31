@@ -39,3 +39,9 @@ raw-data
 # local temporal files
 temp
 .tmp_geojson_processing
+
+# browser tests and documentation output
+playwright-report
+test-results
+website/.vitepress/cache
+website/.vitepress/dist

@@ -4,7 +4,7 @@ import dts from 'vite-plugin-dts';
 export default defineConfig(({ mode }) => {
   const modules = mode === 'modules';
   return {
-    plugins: modules ? [dts({ include: ['src'], insertTypesEntry: true })] : [],
+    plugins: modules ? [dts({ include: ['src'], exclude: ['src/assets/**'], insertTypesEntry: true })] : [],
     build: {
       emptyOutDir: !modules,
       lib: modules ? {

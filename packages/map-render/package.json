@@ -1,0 +1,31 @@
+{
+  "name": "@chile-geo/maps",
+  "version": "0.1.0",
+  "description": "TypeScript 2D/3D dual rendering engine for Chile geographic maps",
+  "type": "module",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    },
+    "./2d": { "types": "./dist/2d.d.ts", "import": "./dist/2d.js" },
+    "./3d": { "types": "./dist/3d.d.ts", "import": "./dist/3d.js" },
+    "./types": { "types": "./dist/types/index.d.ts", "import": "./dist/types.js" }
+  },
+  "scripts": {
+    "build": "vite build --mode main && vite build --mode modules",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "three": ">=0.150.0"
+  },
+  "devDependencies": { "three": "^0.185.1" },
+  "files": ["dist", "README.md"],
+  "sideEffects": false,
+  "license": "MIT"
+}

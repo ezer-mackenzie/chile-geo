@@ -1,6 +1,19 @@
 import { expect, test } from '@playwright/test';
 import { join } from 'node:path';
 
+async function requireWebGLFixture(page, browserName) {
+  await expect.poll(() => page.evaluate(() => ({
+    ready: Boolean(window.chileMap),
+    error: document.querySelector('output')?.textContent ?? '',
+  }))).not.toEqual({ ready: false, error: '' });
+  const result = await page.evaluate(() => ({
+    ready: Boolean(window.chileMap),
+    error: document.querySelector('output')?.textContent ?? '',
+  }));
+  test.skip(!result.ready && /WebGL|context/i.test(result.error), `${browserName} has no WebGL context on this runner.`);
+  expect(result.ready, result.error || 'The 3D fixture did not initialize.').toBe(true);
+}
+
 test.describe('Chile2DMap', () => {
   test.beforeEach(async ({ page }) => { await page.goto('/'); });
 
@@ -79,6 +92,7 @@ test.describe('Chile2DMap', () => {
 test.describe('Chile3DMap', () => {
   test('creates 16 region groups, updates without replacing WebGL, and disposes safely', async ({ page, browserName }) => {
     await page.goto('/?mode=3d');
+    await requireWebGLFixture(page, browserName);
     const canvas = page.locator('canvas');
     await expect(canvas).toHaveCount(1);
     const result = await page.evaluate(() => {
@@ -141,9 +155,10 @@ test.describe('Chile3DMap', () => {
     await expect(error).resolves.toBeTruthy();
   });
 
-  test('respects reduced motion in auto mode and supports explicit continuous rendering', async ({ page }) => {
+  test('respects reduced motion in auto mode and supports explicit continuous rendering', async ({ page, browserName }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/?mode=3d&controls=true');
+    await requireWebGLFixture(page, browserName);
     const reduced = await page.evaluate(async () => {
       const map = window.chileMap;
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -154,6 +169,7 @@ test.describe('Chile3DMap', () => {
     expect(reduced).toBe(0);
 
     await page.goto('/?mode=3d&animation=continuous');
+    await requireWebGLFixture(page, browserName);
     const continuous = await page.evaluate(async () => {
       const map = window.chileMap;
       const before = map.renderer.info.render.frame;

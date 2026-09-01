@@ -85,6 +85,8 @@ See the [API reference](docs/API.md), [data notes](docs/DATA.md), and package [R
 
 Import `CHILE_REGIONS`, `isChileRegionId`, and the `ChileRegionId` type from `/2d`, `/3d`, or `/regions` when building legends, selectors, and validated inputs.
 
+Import `getChileRegionsGeoJSON` and `CHILE_GEOGRAPHY_METADATA` from `@chile-geo/maps/geography` when you need an independent copy of the bundled regional boundaries without either rendering engine.
+
 ## Development
 
 Requirements: Bun 1.2 or newer and a browser with Canvas 2D; WebGL is required only for the 3D renderer.

@@ -25,6 +25,7 @@ export default defineConfig({
       ] },
       { text: 'API', items: [
         { text: 'Types', link: '/api/types' },
+        { text: 'Geographic data API', link: '/api/geography' },
         { text: 'Chile2DMap', link: '/api/chile-2d-map' },
         { text: 'Chile3DMap', link: '/api/chile-3d-map' },
       ] },

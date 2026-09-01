@@ -16,6 +16,10 @@ The renderer asset is produced by reprojecting source shapefiles to WGS84, simpl
 - Administrative boundaries can change. Record the package version when reproducibility matters.
 - Bundled region labels use standardized English names. Spanish source-field identifiers are read only where required by the BCN input schema.
 
+## Programmatic access
+
+Import `getChileRegionsGeoJSON` and `CHILE_GEOGRAPHY_METADATA` from `@chile-geo/maps/geography`. The function returns a fresh `RegionFeatureCollection`, protecting the renderer's bundled snapshot from consumer mutation. The independent entry does not load Three.js or either map engine.
+
 ## Updating the snapshot
 
 Place authorized BCN archives in `raw-data/`, run `bun run process-data`, inspect the results, and run `bun run scripts/build-map-asset.ts`. Validate feature count, identifiers, coordinate precision, and bundle size before committing.

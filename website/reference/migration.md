@@ -23,3 +23,7 @@ No migration is required. Region activation now synchronizes `selectedRegionId`;
 ## From 0.3 to 0.4
 
 No migration is required. The built-in color spectrum remains the default. Applications that need a categorical, quantile, divergent, or branded palette can provide `colorScale`; explicit `RegionData.color` values still have the highest priority.
+
+## From 0.4 to 0.5
+
+No migration is required. Applications that previously duplicated or imported internal geometry should switch to the supported `@chile-geo/maps/geography` entry.

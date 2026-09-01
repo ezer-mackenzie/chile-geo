@@ -7,7 +7,7 @@ const budgets = [
   { label: '2D renderer', prefix: 'Chile2DMap-', maximumGzipBytes: 2_000 },
   { label: '3D renderer', prefix: 'Chile3DMap-', maximumGzipBytes: 8_000 },
   { label: 'region metadata', exact: 'regions.js', maximumGzipBytes: 1_000 },
-  { label: 'geographic asset chunk', prefix: 'geometry-', maximumGzipBytes: 90_000 },
+  { label: 'geographic asset chunk', prefix: 'chile-topography-', maximumGzipBytes: 90_000 },
   { label: 'UMD bundle', exact: 'index.umd.cjs', maximumGzipBytes: 90_000 },
 ];
 

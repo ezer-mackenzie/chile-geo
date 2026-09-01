@@ -13,6 +13,7 @@
     },
     "./2d": { "types": "./dist/2d.d.ts", "import": "./dist/2d.js" },
     "./3d": { "types": "./dist/3d.d.ts", "import": "./dist/3d.js" },
+    "./regions": { "types": "./dist/regions.d.ts", "import": "./dist/regions.js" },
     "./types": { "types": "./dist/types/index.d.ts", "import": "./dist/types.js" }
   },
   "scripts": {

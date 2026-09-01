@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
     build: {
       emptyOutDir: !modules,
       lib: modules ? {
-        entry: { index: 'src/index.ts', '2d': 'src/2d.ts', '3d': 'src/3d.ts', types: 'src/types/index.ts' },
+        entry: { index: 'src/index.ts', '2d': 'src/2d.ts', '3d': 'src/3d.ts', regions: 'src/regions.ts', types: 'src/types/index.ts' },
         formats: ['es'],
         fileName: (_format, entryName) => `${entryName}.js`,
       } : {

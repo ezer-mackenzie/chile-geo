@@ -22,7 +22,7 @@ try {
   await run(['bunx', 'publint', 'run', tarball, '--strict']);
   await run(['bunx', 'attw', tarball, '--profile', 'esm-only', '--summary']);
   const listing = await run(['tar', '-tzf', tarball]);
-  for (const required of ['package/package.json', 'package/dist/index.js', 'package/dist/2d.js', 'package/dist/3d.js', 'package/dist/index.d.ts']) {
+  for (const required of ['package/package.json', 'package/dist/index.js', 'package/dist/2d.js', 'package/dist/3d.js', 'package/dist/regions.js', 'package/dist/regions.d.ts', 'package/dist/index.d.ts']) {
     if (!listing.split('\n').includes(required)) throw new Error(`Packed package is missing ${required}.`);
   }
 
@@ -37,12 +37,13 @@ try {
     strict: true, noEmit: true, target: 'ES2022', module: 'ESNext', moduleResolution: 'bundler', lib: ['ES2022', 'DOM'], skipLibCheck: true,
   }, include: ['main.ts'] }));
   await Bun.write(join(consumer, 'main.ts'), `
-import { Chile2DMap, type RegionData } from '@chile-geo/maps/2d';
+import { CHILE_REGIONS, Chile2DMap, isChileRegionId, type RegionData } from '@chile-geo/maps/2d';
 import { Chile3DMap } from '@chile-geo/maps/3d';
 const data: RegionData[] = [{ id: 'CL-RM', name: 'Santiago Metropolitan Region', value: 1 }];
 declare const container: HTMLElement;
 new Chile2DMap({ container }).updateData(data);
 new Chile3DMap({ container }).updateData(data);
+if (!isChileRegionId(CHILE_REGIONS[0].id)) throw new Error('Invalid public metadata');
 `);
   await Bun.write(join(consumer, 'index.html'), '<div id="app"></div><script type="module" src="/main.ts"></script>');
   await run(['bun', 'install'], consumer);

@@ -19,19 +19,23 @@ export class Chile2DMap {
 
   constructor(options: Map2DOptions) {
     if (!options.container) throw new TypeError('Chile2DMap requires a container element.');
+
     this.options = {
       ...options,
       pixelRatio: Math.min(finitePositiveOption(options.pixelRatio, window.devicePixelRatio || 1, 'pixelRatio'), 3),
       strokeWidth: finiteNonNegativeOption(options.strokeWidth, 0.75, 'strokeWidth'),
     };
+
     this.canvas = document.createElement('canvas');
     this.canvas.setAttribute('aria-label', 'Interactive map of Chile');
     this.canvas.setAttribute('role', 'img');
     this.canvas.tabIndex = 0;
     this.canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:none';
+
     const context = this.canvas.getContext('2d');
     if (!context) throw new Error('Canvas 2D is not supported by this browser.');
     this.context = context;
+
     options.container.append(this.canvas);
     this.resizeObserver = new ResizeObserver(() => this.scheduleDraw());
     this.resizeObserver.observe(options.container);
@@ -42,6 +46,9 @@ export class Chile2DMap {
     this.scheduleDraw();
   }
 
+  /**
+   * Updates the map with a new series of region data. The data is prepared and stored internally, and a redraw of the map is scheduled to reflect the changes.
+   */
   updateData(dataSeries: RegionData[]): void {
     const prepared = prepareDataSeries(dataSeries, geography);
     this.data.clear();
@@ -49,6 +56,9 @@ export class Chile2DMap {
     this.scheduleDraw();
   }
 
+  /**
+   * Destroys the Chile2DMap instance, removing event listeners, disconnecting the resize observer, canceling any scheduled draw frames, and removing the canvas from the DOM. After calling this method, the instance should not be used again.
+   */
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
@@ -66,17 +76,23 @@ export class Chile2DMap {
     this.frame = requestAnimationFrame(() => { this.frame = undefined; this.draw(); });
   }
 
+  /**
+   * Draws the map on the canvas, scaling it according to the container size and pixel ratio. It clears the canvas, calculates the viewport transform, and iterates through each region feature to draw its path with the appropriate fill and stroke styles based on the data values.
+   */
   private draw(): void {
     const rect = this.options.container.getBoundingClientRect();
     const width = Math.max(1, rect.width);
     const height = Math.max(1, rect.height);
     const ratio = this.options.pixelRatio ?? 1;
+
     this.canvas.width = Math.round(width * ratio);
     this.canvas.height = Math.round(height * ratio);
     this.context.setTransform(ratio, 0, 0, ratio, 0, 0);
     this.context.clearRect(0, 0, width, height);
+
     const transform = createViewportTransform(getBounds(geography), width, height);
     const maximum = Math.max(0, ...[...this.data.values()].map((item) => item.value));
+
     this.paths.clear();
     for (const feature of geography.features) {
       const path = new Path2D();
@@ -97,6 +113,9 @@ export class Chile2DMap {
     }
   }
 
+  /**
+   * Finds the region feature at the given pointer or mouse event coordinates. Returns the corresponding RegionFeature if found, otherwise returns undefined.
+   */
   private featureAt(event: PointerEvent | MouseEvent): RegionFeature | undefined {
     const rect = this.canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -104,6 +123,9 @@ export class Chile2DMap {
     return [...this.paths].reverse().find(([, path]) => this.context.isPointInPath(path, x, y, 'evenodd'))?.[0];
   }
 
+  /**
+   * Handles pointer movement over the map. Changes the cursor to a pointer when hovering over a region and triggers the onRegionHover callback if the hovered region changes.
+   */
   private readonly handlePointerMove = (event: PointerEvent): void => {
     const feature = this.featureAt(event);
     this.canvas.style.cursor = feature ? 'pointer' : 'default';
@@ -111,21 +133,37 @@ export class Chile2DMap {
     this.hovered = feature;
     if (feature) this.options.onRegionHover?.(feature.properties.name, this.data.get(feature.properties.id));
   };
+
+  /**
+   * Handles pointer leaving the map area. Resets the hovered region and cursor style to default.
+   */
   private readonly handlePointerLeave = (): void => { this.hovered = undefined; this.canvas.style.cursor = 'default'; };
+
+  /**
+   * Handles click events on the map. If a region is clicked, it triggers the onRegionClick callback with the region's name and associated data.
+   */
   private readonly handleClick = (event: MouseEvent): void => {
     const feature = this.featureAt(event);
     if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
   };
+
+  /**
+   * Handles keyboard navigation for the map. Arrow keys move the focus between regions, and Enter or Space triggers a click event on the focused region.
+  */
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
     if (!['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'Enter', ' '].includes(event.key)) return;
+
     event.preventDefault();
+
     if (event.key === 'Enter' || event.key === ' ') {
       const feature = geography.features[this.focusedIndex];
       if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
       return;
     }
+
     const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
     this.focusedIndex = (this.focusedIndex + direction + geography.features.length) % geography.features.length;
+
     const feature = geography.features[this.focusedIndex];
     if (feature) {
       this.canvas.setAttribute('aria-label', `Interactive map of Chile. Selected: ${feature.properties.name}`);

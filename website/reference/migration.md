@@ -39,3 +39,7 @@ No migration is required. Both renderers now support `setVisibleRegions`; filter
 ## From 0.7 to 0.8
 
 No migration is required. The `/geography` entry now supports targeted feature, bounds, and extent-center lookups by public region ID.
+
+## From 0.8 to 0.9
+
+No consumer migration is required. This release hardens npm publication and rejects release tags that do not exactly match synchronized workspace versions.

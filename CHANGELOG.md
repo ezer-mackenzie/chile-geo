@@ -4,6 +4,18 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-31
+
+### Added
+
+- `auto`, `continuous`, and `on-demand` 3D animation modes.
+- Public `requestRender()` support for direct scene and camera mutations.
+
+### Changed
+
+- Non-animated 3D dashboards coalesce consecutive metric updates into one frame.
+- Automatic animation respects the user's reduced-motion preference.
+
 ## [0.5.0] - 2026-08-31
 
 ### Added

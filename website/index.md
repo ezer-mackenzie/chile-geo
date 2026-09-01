@@ -2,7 +2,7 @@
 layout: home
 hero:
   name: Chile Geo
-  text: Typed geographic visualization for Chile — v0.5
+  text: Typed geographic visualization for Chile — v0.6
   tagline: Responsive Canvas 2D and Three.js 3D maps with bundled offline boundaries.
   actions:
     - theme: brand

@@ -46,15 +46,15 @@
     },
     "packages/data-geojson": {
       "name": "@chile-geo/data-geojson",
-      "version": "0.7.0",
+      "version": "0.8.0",
     },
     "packages/data-topojson": {
       "name": "@chile-geo/data-topojson",
-      "version": "0.7.0",
+      "version": "0.8.0",
     },
     "packages/maps": {
       "name": "@chile-geo/maps",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "devDependencies": {
         "three": "^0.185.1",
       },

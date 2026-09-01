@@ -4,6 +4,17 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-01
+
+### Added
+
+- Targeted `getChileRegionFeature`, `getChileRegionBounds`, and `getChileRegionCenter` geography queries.
+- Public WGS84 bounds and geographic point contracts.
+
+### Changed
+
+- Geography lookups return `undefined` for unknown IDs and clone returned features to protect the bundled snapshot.
+
 ## [0.7.0] - 2026-09-01
 
 ### Added

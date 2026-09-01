@@ -20,6 +20,8 @@ The renderer asset is produced by reprojecting source shapefiles to WGS84, simpl
 
 Import `getChileRegionsGeoJSON` and `CHILE_GEOGRAPHY_METADATA` from `@chile-geo/maps/geography`. The function returns a fresh `RegionFeatureCollection`, protecting the renderer's bundled snapshot from consumer mutation. The independent entry does not load Three.js or either map engine.
 
+Use `getChileRegionFeature`, `getChileRegionBounds`, and `getChileRegionCenter` for targeted queries. Unknown identifiers return `undefined`; returned features are independent clones. Centers represent the midpoint of the WGS84 extent rather than a polygon centroid.
+
 ## Updating the snapshot
 
 Place authorized BCN archives in `raw-data/`, run `bun run process-data`, inspect the results, and run `bun run scripts/build-map-asset.ts`. Validate feature count, identifiers, coordinate precision, and bundle size before committing.

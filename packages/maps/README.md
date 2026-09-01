@@ -9,6 +9,7 @@ bun add @chile-geo/maps
 Use `@chile-geo/maps/2d` for the smallest Canvas-only dependency graph. Use `@chile-geo/maps/3d` after installing the `three` peer dependency. Both classes accept `updateData(RegionData[])`, expose uniform selection and visibility controls, support application-owned `colorScale` functions, and provide `destroy()` for lifecycle cleanup.
 
 Use `@chile-geo/maps/geography` for a renderer-independent GeoJSON copy and its source metadata.
+It also provides feature, WGS84 bounds, and extent-center lookups by region ID.
 
 The 3D renderer supports `auto`, `continuous`, and `on-demand` animation modes. Automatic mode avoids an idle render loop and respects reduced-motion preferences.
 

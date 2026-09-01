@@ -35,3 +35,7 @@ No migration is required for ordinary maps. A 3D map without controls now coales
 ## From 0.6 to 0.7
 
 No migration is required. Both renderers now support `setVisibleRegions`; filtered regions are excluded from rendering, pointer interaction, keyboard navigation, and programmatic selection.
+
+## From 0.7 to 0.8
+
+No migration is required. The `/geography` entry now supports targeted feature, bounds, and extent-center lookups by public region ID.

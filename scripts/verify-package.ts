@@ -39,13 +39,14 @@ try {
   await Bun.write(join(consumer, 'main.ts'), `
 import { CHILE_REGIONS, Chile2DMap, isChileRegionId, type RegionData } from '@chile-geo/maps/2d';
 import { Chile3DMap } from '@chile-geo/maps/3d';
-import { CHILE_GEOGRAPHY_METADATA, getChileRegionsGeoJSON } from '@chile-geo/maps/geography';
+import { CHILE_GEOGRAPHY_METADATA, getChileRegionBounds, getChileRegionFeature, getChileRegionsGeoJSON } from '@chile-geo/maps/geography';
 const data: RegionData[] = [{ id: 'CL-RM', name: 'Santiago Metropolitan Region', value: 1 }];
 declare const container: HTMLElement;
 new Chile2DMap({ container }).updateData(data);
 new Chile3DMap({ container }).updateData(data);
 if (!isChileRegionId(CHILE_REGIONS[0].id)) throw new Error('Invalid public metadata');
 if (getChileRegionsGeoJSON().features.length !== CHILE_GEOGRAPHY_METADATA.featureCount) throw new Error('Invalid public geography');
+if (!getChileRegionFeature('CL-RM') || !getChileRegionBounds('CL-RM')) throw new Error('Invalid geography lookup');
 `);
   await Bun.write(join(consumer, 'index.html'), '<div id="app"></div><script type="module" src="/main.ts"></script>');
   await run(['bun', 'install'], consumer);

@@ -69,6 +69,13 @@ jobs:
             exit 1
           fi
 
+      - name: Set provenance repository metadata
+        working-directory: packages/map-render
+        run: >-
+          bun -e "const path = 'package.json'; const manifest = await Bun.file(path).json();
+          manifest.repository = { type: 'git', url: 'https://github.com/ezer-mackenzie/chile-geo', directory: 'packages/map-render' };
+          await Bun.write(path, JSON.stringify(manifest, null, 2) + '\n');"
+
       - name: Verify npm token identity
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

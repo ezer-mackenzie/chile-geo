@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ezer-mackenzie/chile-geo.git",
+    "url": "https://github.com/ezer-mackenzie/chile-geo",
     "directory": "packages/data-topojson"
   },
   "homepage": "https://github.com/ezer-mackenzie/chile-geo#readme",

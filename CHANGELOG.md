@@ -22,6 +22,7 @@ All notable changes to this project will be documented here. The format follows 
 - Firefox browser tests request WebGL explicitly and report an annotated skip when a CI host cannot provide any WebGL context, while retaining mandatory unavailable-context coverage.
 - Release validation reads manifest metadata directly so npm workspace aggregation cannot corrupt package-name or version checks.
 - A confirmation-gated, version-locked bootstrap workflow creates `@chile-geo/maps@0.1.0` before trusted publishing is configured.
+- Historical publication workflows inject the exact GitHub repository metadata required for Sigstore provenance validation.
 
 ## [0.8.0] - 2026-09-01
 

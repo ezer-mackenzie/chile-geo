@@ -87,6 +87,8 @@ Import `CHILE_REGIONS`, `isChileRegionId`, and the `ChileRegionId` type from `/2
 
 Import `getChileRegionsGeoJSON` and `CHILE_GEOGRAPHY_METADATA` from `@chile-geo/maps/geography` when you need an independent copy of the bundled regional boundaries without either rendering engine.
 
+The 3D renderer defaults to automatic animation: dashboards without controls render on demand, controls animate when appropriate, and reduced-motion preferences are respected. Use `animationMode` to override this behavior.
+
 ## Development
 
 Requirements: Bun 1.2 or newer and a browser with Canvas 2D; WebGL is required only for the 3D renderer.

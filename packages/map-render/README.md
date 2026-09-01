@@ -10,4 +10,6 @@ Use `@chile-geo/maps/2d` for the smallest Canvas-only dependency graph. Use `@ch
 
 Use `@chile-geo/maps/geography` for a renderer-independent GeoJSON copy and its source metadata.
 
+The 3D renderer supports `auto`, `continuous`, and `on-demand` animation modes. Automatic mode avoids an idle render loop and respects reduced-motion preferences.
+
 Complete usage, API tables, browser support, and data attribution are maintained in the repository [README](../../README.md) and [API reference](../../docs/API.md).

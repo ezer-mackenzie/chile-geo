@@ -80,6 +80,17 @@ test.describe('Chile3DMap', () => {
       return { sameElement: element === map.renderer.domElement, groups: map.mainGroup.children.length, name: map.mainGroup.name };
     });
     expect(result).toEqual({ sameElement: true, groups: 16, name: 'ChileMainGroup' });
+    const renderBatch = await page.evaluate(async () => {
+      const map = window.chileMap;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const before = map.renderer.info.render.frame;
+      for (let index = 0; index < 100; index++) window.updateMetrics();
+      const immediate = map.renderer.info.render.frame;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      return { immediate: immediate - before, rendered: map.renderer.info.render.frame - before };
+    });
+    expect(renderBatch.immediate).toBe(0);
+    expect(renderBatch.rendered).toBe(1);
     expect(await page.evaluate(() => {
       const map = window.chileMap;
       const selected = map.selectRegion('CL-RM');
@@ -111,6 +122,28 @@ test.describe('Chile3DMap', () => {
     await page.goto('/?mode=webgl-off');
     await expect(page.locator('output')).toContainText(/WebGL|context/i);
     await expect(error).resolves.toBeTruthy();
+  });
+
+  test('respects reduced motion in auto mode and supports explicit continuous rendering', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/?mode=3d&controls=true');
+    const reduced = await page.evaluate(async () => {
+      const map = window.chileMap;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const before = map.renderer.info.render.frame;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      return map.renderer.info.render.frame - before;
+    });
+    expect(reduced).toBe(0);
+
+    await page.goto('/?mode=3d&animation=continuous');
+    const continuous = await page.evaluate(async () => {
+      const map = window.chileMap;
+      const before = map.renderer.info.render.frame;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      return map.renderer.info.render.frame - before;
+    });
+    expect(continuous).toBeGreaterThanOrEqual(2);
   });
 });
 

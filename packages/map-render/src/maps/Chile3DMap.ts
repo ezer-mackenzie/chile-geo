@@ -24,7 +24,8 @@ export class Chile3DMap {
   private readonly data = new Map<string, RegionData>();
   private readonly resizeObserver: ResizeObserver;
   private readonly controls?: OrbitControls;
-  private animationFrame = 0;
+  private readonly continuous: boolean;
+  private animationFrame: number | undefined;
   private focusedIndex = 0;
   private hoveredId: string | undefined;
   private selectedId: string | undefined;
@@ -33,6 +34,10 @@ export class Chile3DMap {
   constructor(options: Map3DOptions) {
     if (!options.container) throw new TypeError('Chile3DMap requires a container element.');
     this.options = { ...options, maxExtrusionDepth: finitePositiveOption(options.maxExtrusionDepth, 3, 'maxExtrusionDepth') };
+    const animationMode = options.animationMode ?? 'auto';
+    if (!['auto', 'continuous', 'on-demand'].includes(animationMode)) throw new TypeError('animationMode must be auto, continuous, or on-demand.');
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    this.continuous = animationMode === 'continuous' || (animationMode === 'auto' && Boolean(options.enableControls) && !reducedMotion);
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.domElement.setAttribute('aria-label', 'Interactive 3D map of Chile');
     this.renderer.domElement.setAttribute('role', 'img');
@@ -49,8 +54,8 @@ export class Chile3DMap {
     this.camera.lookAt(0, 0, 0);
     if (options.enableControls) {
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.enableDamping = true;
-      this.controls.addEventListener('change', this.render);
+      this.controls.enableDamping = this.continuous;
+      this.controls.addEventListener('change', this.requestRender);
       this.controls.target.set(0, 0, 0);
     }
     this.createRegions();
@@ -61,7 +66,7 @@ export class Chile3DMap {
     this.renderer.domElement.addEventListener('click', this.handleClick);
     this.renderer.domElement.addEventListener('keydown', this.handleKeyDown);
     this.resize();
-    if (this.controls) this.animate(); else this.render();
+    if (this.continuous) this.animate(); else this.requestRender();
   }
 
   updateData(dataSeries: RegionData[]): void {
@@ -88,7 +93,7 @@ export class Chile3DMap {
         this.applySelectionStyle(mesh, id === this.selectedId);
       }
     }
-    this.render();
+    this.requestRender();
   }
 
   /** Selects a region by its public identifier without emitting callbacks. */
@@ -100,7 +105,7 @@ export class Chile3DMap {
     this.focusedIndex = geography.features.findIndex((feature) => feature.properties.id === regionId);
     this.renderer.domElement.setAttribute('aria-label', `Interactive 3D map of Chile. Selected: ${region.userData.regionName}`);
     this.refreshSelectionStyles();
-    this.render();
+    this.requestRender();
     return true;
   }
 
@@ -110,7 +115,7 @@ export class Chile3DMap {
     this.selectedId = undefined;
     this.renderer.domElement.setAttribute('aria-label', 'Interactive 3D map of Chile');
     this.refreshSelectionStyles();
-    this.render();
+    this.requestRender();
   }
 
   /** Returns the selected public region identifier, if any. */
@@ -119,10 +124,10 @@ export class Chile3DMap {
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
-    cancelAnimationFrame(this.animationFrame);
+    if (this.animationFrame !== undefined) cancelAnimationFrame(this.animationFrame);
     this.resizeObserver.disconnect();
     this.controls?.dispose();
-    this.controls?.removeEventListener('change', this.render);
+    this.controls?.removeEventListener('change', this.requestRender);
     this.renderer.domElement.removeEventListener('pointermove', this.handlePointerMove);
     this.renderer.domElement.removeEventListener('pointerleave', this.handlePointerLeave);
     this.renderer.domElement.removeEventListener('click', this.handleClick);
@@ -177,16 +182,25 @@ export class Chile3DMap {
     this.camera.updateProjectionMatrix();
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
     this.renderer.setSize(safeWidth, safeHeight, false);
-    this.render();
+    this.requestRender();
   };
 
-  private readonly render = (): void => { if (!this.destroyed) this.renderer.render(this.scene, this.camera); };
+  /** Schedules one render for application changes to the public scene or camera. */
+  readonly requestRender = (): void => {
+    if (this.destroyed || this.continuous || this.animationFrame !== undefined) return;
+    this.animationFrame = requestAnimationFrame(() => {
+      this.animationFrame = undefined;
+      this.draw();
+    });
+  };
+
+  private draw(): void { if (!this.destroyed) this.renderer.render(this.scene, this.camera); }
 
   private animate = (): void => {
     if (this.destroyed) return;
     this.animationFrame = requestAnimationFrame(this.animate);
     this.controls?.update();
-    this.render();
+    this.draw();
   };
 
   private intersect(event: PointerEvent | MouseEvent): THREE.Object3D | undefined {

@@ -11,6 +11,8 @@ const map = new Chile3DMap({
 map.updateData([{ id: 'CL-MA', name: 'Magallanes and Chilean Antarctica Region', value: 70 }]);
 ```
 
+The default `animationMode: 'auto'` uses on-demand rendering without controls and respects reduced-motion preferences when controls are enabled. Choose `continuous` for custom animated scene content or `on-demand` for a strictly event-driven dashboard. After mutating `map.scene` or `map.camera` directly, call `map.requestRender()`.
+
 Three.js is an optional peer dependency. Without controls, the renderer draws on demand after construction, resize, and data updates. With controls enabled, it renders continuously for damped interaction. Construction throws when WebGL is unavailable; applications that require a fallback should catch that error and create `Chile2DMap`.
 
 <ClientOnly><Map3DDemo /></ClientOnly>

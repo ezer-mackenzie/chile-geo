@@ -27,3 +27,7 @@ No migration is required. The built-in color spectrum remains the default. Appli
 ## From 0.4 to 0.5
 
 No migration is required. Applications that previously duplicated or imported internal geometry should switch to the supported `@chile-geo/maps/geography` entry.
+
+## From 0.5 to 0.6
+
+No migration is required for ordinary maps. A 3D map without controls now coalesces updates and renders on demand. Applications that animate custom scene objects must set `animationMode: 'continuous'`, or call `requestRender()` after each direct change.

@@ -1,5 +1,5 @@
 import { Chile2DMap, type RegionColorScale } from '../../../packages/map-render/src/2d';
-import { Chile3DMap } from '../../../packages/map-render/src/3d';
+import { Chile3DMap, type Map3DOptions } from '../../../packages/map-render/src/3d';
 
 declare global { interface Window { chileMap: Chile2DMap | Chile3DMap; colorScaleCalls: number; colorScaleMaximum: number; updateMetrics(): void; destroyMap(): void } }
 
@@ -11,10 +11,12 @@ const metrics = [
   { id: 'CL-RM', name: 'Santiago Metropolitan Region', value: 80 },
   { id: 'CL-VS', name: 'Valparaíso Region', value: 45 },
 ];
-const mode = new URLSearchParams(location.search).get('mode');
+const search = new URLSearchParams(location.search);
+const mode = search.get('mode');
+const animationMode = (search.get('animation') ?? undefined) as Map3DOptions['animationMode'];
 window.colorScaleCalls = 0;
 window.colorScaleMaximum = 0;
-const colorScale: RegionColorScale | undefined = new URLSearchParams(location.search).get('palette') === 'custom'
+const colorScale: RegionColorScale | undefined = search.get('palette') === 'custom'
   ? ({ value, maximum }) => {
       window.colorScaleCalls++;
       window.colorScaleMaximum = maximum;
@@ -30,7 +32,7 @@ if (mode === 'webgl-off') {
 }
 try {
   window.chileMap = mode === '3d' || mode === 'webgl-off'
-    ? new Chile3DMap({ container, maxExtrusionDepth: 3, colorScale, onRegionClick: callback, onRegionHover: callback })
+    ? new Chile3DMap({ container, maxExtrusionDepth: 3, enableControls: search.get('controls') === 'true', animationMode, colorScale, onRegionClick: callback, onRegionHover: callback })
     : new Chile2DMap({ container, pixelRatio: 2, colorScale, onRegionClick: callback, onRegionHover: callback });
 } catch (error) {
   output.value = error instanceof Error ? error.message : String(error);

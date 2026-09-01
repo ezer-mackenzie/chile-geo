@@ -27,6 +27,7 @@ export interface BaseMapOptions {
 export interface Map3DOptions extends BaseMapOptions {
   maxExtrusionDepth?: number;
   enableControls?: boolean;
+  animationMode?: 'auto' | 'continuous' | 'on-demand';
 }
 
 export interface Map2DOptions extends BaseMapOptions {

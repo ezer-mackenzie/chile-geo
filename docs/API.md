@@ -37,7 +37,7 @@ Import from `@chile-geo/maps/2d` to exclude Three.js from the dependency graph. 
 
 ## `Chile3DMap`
 
-Import from `@chile-geo/maps/3d`. The application must provide the `three` peer dependency. `Map3DOptions` adds `maxExtrusionDepth` (default `3`) and `enableControls` (default `false`).
+Import from `@chile-geo/maps/3d`. The application must provide the `three` peer dependency. `Map3DOptions` adds `maxExtrusionDepth` (default `3`), `enableControls` (default `false`), and `animationMode` (default `auto`).
 
 - `scene`: Three.js scene.
 - `camera`: configured perspective camera.
@@ -47,9 +47,12 @@ Import from `@chile-geo/maps/3d`. The application must provide the `three` peer 
 - `selectRegion(regionId)`: selects a known region and returns whether it was found.
 - `clearSelection()`: clears the selected region.
 - `selectedRegionId`: currently selected public identifier, if any.
+- `requestRender()`: schedules a frame after direct scene or camera changes.
 - `destroy()`: stops animation and disposes controls, geometries, materials, listeners, and renderer.
 
 Each intersectable mesh stores `regionId`, `regionName`, and supplied metric fields in `mesh.userData`.
+
+`auto` renders continuously only for enabled controls when reduced motion is not requested. `on-demand` coalesces repeated updates into one frame. `continuous` is available for applications with their own animated scene content.
 
 Both renderer elements are keyboard-focusable. Arrow keys change the active region; Enter or Space invokes `onRegionClick`. Invalid positive-only numeric options throw `RangeError`. Unknown metric IDs are ignored with a warning, invalid values become zero, and the last duplicate ID wins.
 

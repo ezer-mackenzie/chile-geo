@@ -77,7 +77,14 @@ export class Chile3DMap {
         const mesh = child as THREE.Mesh<THREE.ExtrudeGeometry, THREE.MeshStandardMaterial>;
         mesh.userData = item ? { ...item, regionId: id, regionName: group.userData.regionName } : { regionId: id, regionName: group.userData.regionName };
         mesh.scale.z = depth;
-        mesh.material.color.set(item?.color ?? metricColor(item?.value ?? 0, maximum, this.options.defaultColor ?? '#94a3b8'));
+        const value = item?.value ?? 0;
+        mesh.material.color.set(item?.color ?? this.options.colorScale?.({
+          id,
+          name: group.userData.regionName,
+          value,
+          maximum,
+          data: item,
+        }) ?? metricColor(value, maximum, this.options.defaultColor ?? '#94a3b8'));
         this.applySelectionStyle(mesh, id === this.selectedId);
       }
     }

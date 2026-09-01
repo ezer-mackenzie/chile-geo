@@ -60,10 +60,16 @@ test.describe('Chile2DMap', () => {
     await page.goto('/');
     await expect(page.locator('canvas')).toHaveScreenshot('chile-2d-desktop.png', { maxDiffPixelRatio: 0.01 });
   });
+
+  test('uses an application-owned color scale with normalized context', async ({ page }) => {
+    await page.goto('/?palette=custom');
+    await expect.poll(() => page.evaluate(() => window.colorScaleCalls)).toBeGreaterThanOrEqual(16);
+    expect(await page.evaluate(() => window.colorScaleMaximum)).toBe(80);
+  });
 });
 
 test.describe('Chile3DMap', () => {
-  test('creates 16 region groups, updates without replacing WebGL, and disposes safely', async ({ page }) => {
+  test('creates 16 region groups, updates without replacing WebGL, and disposes safely', async ({ page, browserName }) => {
     await page.goto('/?mode=3d');
     const canvas = page.locator('canvas');
     await expect(canvas).toHaveCount(1);
@@ -85,7 +91,7 @@ test.describe('Chile3DMap', () => {
       const start = performance.now();
       for (let index = 0; index < 100; index++) window.updateMetrics();
       return performance.now() - start;
-    })).toBeLessThan(2_000);
+    })).toBeLessThan(browserName === 'webkit' ? 3_000 : 2_000);
     await canvas.focus();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');

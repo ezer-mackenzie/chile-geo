@@ -5,10 +5,21 @@ export interface RegionData {
   color?: string;
 }
 
+export interface RegionColorContext {
+  id: string;
+  name: string;
+  value: number;
+  maximum: number;
+  data?: RegionData;
+}
+
+export type RegionColorScale = (context: RegionColorContext) => string;
+
 export interface BaseMapOptions {
   container: HTMLElement;
   defaultColor?: string;
   selectedColor?: string;
+  colorScale?: RegionColorScale;
   onRegionClick?: (regionName: string, data?: RegionData) => void;
   onRegionHover?: (regionName: string, data?: RegionData) => void;
 }

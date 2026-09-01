@@ -1,7 +1,7 @@
-import { Chile2DMap } from '../../../packages/map-render/src/2d';
+import { Chile2DMap, type RegionColorScale } from '../../../packages/map-render/src/2d';
 import { Chile3DMap } from '../../../packages/map-render/src/3d';
 
-declare global { interface Window { chileMap: Chile2DMap | Chile3DMap; updateMetrics(): void; destroyMap(): void } }
+declare global { interface Window { chileMap: Chile2DMap | Chile3DMap; colorScaleCalls: number; colorScaleMaximum: number; updateMetrics(): void; destroyMap(): void } }
 
 const container = document.querySelector<HTMLElement>('#map')!;
 const output = document.querySelector<HTMLOutputElement>('#event')!;
@@ -12,6 +12,15 @@ const metrics = [
   { id: 'CL-VS', name: 'Valparaíso Region', value: 45 },
 ];
 const mode = new URLSearchParams(location.search).get('mode');
+window.colorScaleCalls = 0;
+window.colorScaleMaximum = 0;
+const colorScale: RegionColorScale | undefined = new URLSearchParams(location.search).get('palette') === 'custom'
+  ? ({ value, maximum }) => {
+      window.colorScaleCalls++;
+      window.colorScaleMaximum = maximum;
+      return value > maximum / 2 ? '#7f1d1d' : '#fef3c7';
+    }
+  : undefined;
 if (mode === 'webgl-off') {
   const original = HTMLCanvasElement.prototype.getContext;
   HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, contextId: string, ...args: unknown[]) {
@@ -21,8 +30,8 @@ if (mode === 'webgl-off') {
 }
 try {
   window.chileMap = mode === '3d' || mode === 'webgl-off'
-    ? new Chile3DMap({ container, maxExtrusionDepth: 3, onRegionClick: callback, onRegionHover: callback })
-    : new Chile2DMap({ container, pixelRatio: 2, onRegionClick: callback, onRegionHover: callback });
+    ? new Chile3DMap({ container, maxExtrusionDepth: 3, colorScale, onRegionClick: callback, onRegionHover: callback })
+    : new Chile2DMap({ container, pixelRatio: 2, colorScale, onRegionClick: callback, onRegionHover: callback });
 } catch (error) {
   output.value = error instanceof Error ? error.message : String(error);
   output.textContent = output.value;

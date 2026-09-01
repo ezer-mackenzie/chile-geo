@@ -11,6 +11,8 @@
 
 Rendering and callbacks match records by `id`. The bundled geographic name is passed as the first callback argument; the matching consumer record is passed as the second argument.
 
+`RegionColorScale` receives `{ id, name, value, maximum, data }`. An explicit `RegionData.color` always takes precedence over the scale.
+
 ## `BaseMapOptions`
 
 | Option | Default | Description |
@@ -18,6 +20,7 @@ Rendering and callbacks match records by `id`. The bundled geographic name is pa
 | `container` | required | Host element that owns the renderer |
 | `defaultColor` | `#94a3b8` | Fill used when no positive metric is available |
 | `selectedColor` | renderer-specific | Outline or emissive color used for the selected region |
+| `colorScale` | generated spectrum | Receives region context and returns a CSS color when the record has no explicit `color` |
 | `onRegionClick` | none | Called when a region is clicked |
 | `onRegionHover` | none | Called once when the pointer enters a different region |
 

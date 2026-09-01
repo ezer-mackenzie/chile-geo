@@ -15,3 +15,11 @@ import { CHILE_REGIONS, isChileRegionId, type ChileRegionId } from '@chile-geo/m
 ## Compatibility promise
 
 Patch releases in the same `0.x` minor line are compatible. A future `0.x` minor release may refine public APIs and will include explicit migration instructions. The API freezes at `1.0.0-rc.1` unless release-candidate testing reveals a blocker.
+
+## From 0.2 to 0.3
+
+No migration is required. Region activation now synchronizes `selectedRegionId`; applications can also call `selectRegion` and `clearSelection`. Use `selectedColor` to customize the highlight.
+
+## From 0.3 to 0.4
+
+No migration is required. The built-in color spectrum remains the default. Applications that need a categorical, quantile, divergent, or branded palette can provide `colorScale`; explicit `RegionData.color` values still have the highest priority.

@@ -129,7 +129,14 @@ export class Chile2DMap {
         path.closePath();
       }
       const item = this.data.get(feature.properties.id);
-      this.context.fillStyle = item?.color ?? metricColor(item?.value ?? 0, maximum, this.options.defaultColor ?? '#94a3b8');
+      const value = item?.value ?? 0;
+      this.context.fillStyle = item?.color ?? this.options.colorScale?.({
+        id: feature.properties.id,
+        name: feature.properties.name,
+        value,
+        maximum,
+        data: item,
+      }) ?? metricColor(value, maximum, this.options.defaultColor ?? '#94a3b8');
       this.context.fill(path, 'evenodd');
       this.context.strokeStyle = this.options.strokeColor ?? '#ffffff';
       this.context.lineWidth = this.options.strokeWidth ?? 0.75;

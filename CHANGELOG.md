@@ -4,6 +4,17 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-31
+
+### Added
+
+- A renderer-independent `/geography` export with cloned regional GeoJSON.
+- Typed source metadata containing snapshot date, coordinate precision, feature count, CRS, and checksum.
+
+### Changed
+
+- Package-contract verification now installs and compiles the public geography entry.
+
 ## [0.4.0] - 2026-08-31
 
 ### Added

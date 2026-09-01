@@ -29,6 +29,27 @@ The publish job uses Node 24, npm 11.15 or newer, a GitHub-hosted runner, and `i
 
 An npm `E404` during the package `PUT` can mean that the scope does not exist or that the current identity cannot publish to it. A successful provenance upload does not prove registry write authorization.
 
+## Publishing the historical release line
+
+Versions `0.1.0` through `0.9.0` were never accepted by npm and may therefore be published in order. Do not move their tags after any version reaches the registry.
+
+1. Publish `0.1.0` as the one-time authenticated bootstrap because npm requires an existing package before its trusted publisher can be configured.
+2. Configure `publish.yml` as the package's trusted publisher using the `npm` GitHub environment.
+3. Run the `Publish Package` workflow manually for each remaining tag, in ascending order:
+
+```bash
+gh workflow run publish.yml -f release_tag=v0.2.0
+gh workflow run publish.yml -f release_tag=v0.3.0
+gh workflow run publish.yml -f release_tag=v0.4.0
+gh workflow run publish.yml -f release_tag=v0.5.0
+gh workflow run publish.yml -f release_tag=v0.6.0
+gh workflow run publish.yml -f release_tag=v0.7.0
+gh workflow run publish.yml -f release_tag=v0.8.0
+gh workflow run publish.yml -f release_tag=v0.9.0
+```
+
+Wait for each publication to finish before starting the next one. The workflow checks out the requested immutable tag, validates its version contract, supports the historical `packages/map-render` directory and the current `packages/maps` directory, and publishes stable versions under npm's `latest` dist-tag. After the sequence, `latest` points to `0.9.0`.
+
 ## Registry choice
 
 npm is the primary registry for this library because ordinary Node.js, Bun, npm, pnpm, and Yarn consumers can install it without extra registry configuration. GitHub Packages is a valid secondary registry, but its npm packages must use a GitHub user or organization namespace and consumers may need registry authentication and an `.npmrc` scope mapping. Publishing there would therefore require renaming the package or creating a matching GitHub organization; it does not solve ownership of the `@chile-geo` npm scope.

@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing Git tag to publish, for example v0.2.0
+        required: true
+        type: string
 
 concurrency:
   group: npm-publish-${{ github.ref }}
@@ -20,6 +26,8 @@ jobs:
     environment: npm
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -43,12 +51,49 @@ jobs:
       - name: Verify package artifacts
         run: bun run test:package
 
+      - name: Locate the publishable package
+        id: package
+        shell: bash
+        run: |
+          if [[ -f packages/maps/package.json ]]; then
+            echo "directory=packages/maps" >> "${GITHUB_OUTPUT}"
+          elif [[ -f packages/map-render/package.json ]]; then
+            echo "directory=packages/map-render" >> "${GITHUB_OUTPUT}"
+          else
+            echo "::error::The @chile-geo/maps package directory was not found."
+            exit 1
+          fi
+
       - name: Verify release contract
-        run: bun run release:check
+        working-directory: ${{ steps.package.outputs.directory }}
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          package_name="$(npm pkg get name | tr -d '"')"
+          package_version="$(npm pkg get version | tr -d '"')"
+
+          if [[ "${package_name}" != "@chile-geo/maps" ]]; then
+            echo "::error::Unexpected package name ${package_name}."
+            exit 1
+          fi
+
+          if [[ "${RELEASE_TAG}" != "v${package_version}" ]]; then
+            echo "::error::Tag ${RELEASE_TAG} does not match package version ${package_version}."
+            exit 1
+          fi
+
+          for manifest in ../../package.json ../../packages/data-geojson/package.json ../../packages/data-topojson/package.json; do
+            manifest_version="$(node -p "require('./${manifest}').version")"
+            if [[ "${manifest_version}" != "${package_version}" ]]; then
+              echo "::error::${manifest} is ${manifest_version}; expected ${package_version}."
+              exit 1
+            fi
+          done
 
       - name: Select npm distribution tag
         id: dist-tag
-        working-directory: packages/maps
+        working-directory: ${{ steps.package.outputs.directory }}
         shell: bash
         run: |
           version="$(npm pkg get version | tr -d '"')"
@@ -59,5 +104,5 @@ jobs:
           fi
 
       - name: Publish to npm with trusted publishing
-        working-directory: packages/maps
+        working-directory: ${{ steps.package.outputs.directory }}
         run: npm publish --access public --tag "${{ steps.dist-tag.outputs.value }}"

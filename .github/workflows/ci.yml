@@ -21,6 +21,7 @@ jobs:
       - run: bun run build
       - run: bun run check:bundle
       - run: bun run test:package
+      - run: bun run examples:build
       - run: bun run test:browser:all
       - run: bun run docs:build
 

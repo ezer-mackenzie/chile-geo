@@ -1,0 +1,1 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; } body { margin: 0; } main { width: min(900px, 100% - 2rem); margin: auto; } #map { height: 78vh; min-height: 560px; border: 1px solid #64748b; border-radius: 12px; overflow: hidden; }

@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "build": "bun run --filter '*' build",
@@ -18,7 +19,8 @@
     "docs:build": "vitepress build website",
     "docs:preview": "vitepress preview website",
     "release:check": "bun run scripts/verify-release.ts",
-    "verify": "bun run check && bun test && bun run build && bun run check:bundle && bun run test:package && bun run test:browser && bun run docs:build",
+    "examples:build": "vite build examples/vanilla-2d && vite build examples/vanilla-3d && vite build examples/vue-lifecycle",
+    "verify": "bun run check && bun test && bun run build && bun run check:bundle && bun run test:package && bun run examples:build && bun run test:browser && bun run docs:build",
     "process-data": "bun run ./scripts/process.ts"
   },
   "devDependencies": {

@@ -21,6 +21,29 @@
         "vue": "latest",
       },
     },
+    "examples/vanilla-2d": {
+      "name": "@chile-geo/example-vanilla-2d",
+      "version": "0.0.0",
+      "dependencies": {
+        "@chile-geo/maps": "workspace:*",
+      },
+    },
+    "examples/vanilla-3d": {
+      "name": "@chile-geo/example-vanilla-3d",
+      "version": "0.0.0",
+      "dependencies": {
+        "@chile-geo/maps": "workspace:*",
+        "three": "^0.185.1",
+      },
+    },
+    "examples/vue-lifecycle": {
+      "name": "@chile-geo/example-vue-lifecycle",
+      "version": "0.0.0",
+      "dependencies": {
+        "@chile-geo/maps": "workspace:*",
+        "vue": "^3.5.0",
+      },
+    },
     "packages/data-geojson": {
       "name": "@chile-geo/data-geojson",
       "version": "0.1.0",
@@ -95,6 +118,12 @@
     "@chile-geo/data-geojson": ["@chile-geo/data-geojson@workspace:packages/data-geojson"],
 
     "@chile-geo/data-topojson": ["@chile-geo/data-topojson@workspace:packages/data-topojson"],
+
+    "@chile-geo/example-vanilla-2d": ["@chile-geo/example-vanilla-2d@workspace:examples/vanilla-2d"],
+
+    "@chile-geo/example-vanilla-3d": ["@chile-geo/example-vanilla-3d@workspace:examples/vanilla-3d"],
+
+    "@chile-geo/example-vue-lifecycle": ["@chile-geo/example-vue-lifecycle@workspace:examples/vue-lifecycle"],
 
     "@chile-geo/maps": ["@chile-geo/maps@workspace:packages/map-render"],
 

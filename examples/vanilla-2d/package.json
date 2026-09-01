@@ -1,0 +1,7 @@
+{
+  "name": "@chile-geo/example-vanilla-2d",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": { "@chile-geo/maps": "workspace:*" }
+}

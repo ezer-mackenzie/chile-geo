@@ -1,6 +1,9 @@
 {
   "name": "@chile-geo/example-vue-lifecycle",
   "version": "0.0.0",
+  "description": "Vue lifecycle example for Chile Geo map renderers",
+  "author": "Eli-ezer Reuven Ramirez Ruiz",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "dependencies": {

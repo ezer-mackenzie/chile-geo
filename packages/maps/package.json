@@ -4,6 +4,15 @@
   "description": "Typed Canvas and Three.js maps for Chilean geographic analytics",
   "author": "Eli-ezer Reuven Ramirez Ruiz",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezer-mackenzie/chile-geo.git",
+    "directory": "packages/maps"
+  },
+  "homepage": "https://github.com/ezer-mackenzie/chile-geo#readme",
+  "bugs": {
+    "url": "https://github.com/ezer-mackenzie/chile-geo/issues"
+  },
   "keywords": [
     "chile",
     "map",
@@ -52,7 +61,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
   },
   "sideEffects": false,
   "scripts": {

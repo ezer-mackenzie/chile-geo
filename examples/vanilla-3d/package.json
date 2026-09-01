@@ -1,6 +1,9 @@
 {
   "name": "@chile-geo/example-vanilla-3d",
   "version": "0.0.0",
+  "description": "Vanilla TypeScript example for the Chile Geo Three.js renderer",
+  "author": "Eli-ezer Reuven Ramirez Ruiz",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "dependencies": {

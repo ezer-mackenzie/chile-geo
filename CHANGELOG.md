@@ -4,6 +4,18 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-01
+
+### Added
+
+- A release contract check that rejects mismatched tags, workspace versions, package identity, and changelog entries.
+- Documented one-time npm scope bootstrap and trusted-publisher migration procedures.
+
+### Changed
+
+- The release workflow supports a short-lived granular token only at the publish step, then falls back to OIDC trusted publishing.
+- Prereleases automatically use the `next` npm tag while stable versions use `latest`.
+
 ## [0.8.0] - 2026-09-01
 
 ### Added

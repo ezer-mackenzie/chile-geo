@@ -83,6 +83,8 @@ Both map classes implement `updateData(dataSeries: RegionData[]): void` and `des
 
 See the [API reference](docs/API.md), [data notes](docs/DATA.md), and package [README](packages/map-render/README.md).
 
+Import `CHILE_REGIONS`, `isChileRegionId`, and the `ChileRegionId` type from `/2d`, `/3d`, or `/regions` when building legends, selectors, and validated inputs.
+
 ## Development
 
 Requirements: Bun 1.2 or newer and a browser with Canvas 2D; WebGL is required only for the 3D renderer.

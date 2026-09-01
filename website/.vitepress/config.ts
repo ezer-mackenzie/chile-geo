@@ -36,6 +36,7 @@ export default defineConfig({
         { text: 'Browser support', link: '/reference/browser-support' },
         { text: 'Geographic data', link: '/reference/data' },
         { text: 'Compatibility', link: '/reference/compatibility' },
+        { text: 'Migration', link: '/reference/migration' },
         { text: 'Troubleshooting', link: '/reference/troubleshooting' },
       ] },
     ],

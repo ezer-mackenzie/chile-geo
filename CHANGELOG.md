@@ -15,6 +15,8 @@ All notable changes to this project will be documented here. The format follows 
 
 - The release workflow supports a short-lived granular token only at the publish step, then falls back to OIDC trusted publishing.
 - Prereleases automatically use the `next` npm tag while stable versions use `latest`.
+- Package manifests include consistent author, license, repository, support, and registry metadata.
+- The release workflow validates first-publication authentication before invoking `npm publish`.
 
 ## [0.8.0] - 2026-09-01
 

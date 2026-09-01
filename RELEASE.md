@@ -12,16 +12,28 @@
 
 ## First publication bootstrap
 
-Trusted publishing cannot be configured until the package exists on npm. Before the first publication:
+Trusted publishing cannot be configured until the package exists on npm. The `@chile-geo` scope must belong to an npm user or organization; owning the similarly named GitHub repository does not grant npm permissions.
 
-1. Confirm that the npm account or organization `chile-geo` exists and that the publishing account can create public packages in that scope.
-2. Create a short-lived granular npm access token with read/write package permission for the `@chile-geo` scope and workflow-compatible 2FA settings.
-3. Add it as the `NPM_TOKEN` secret in the protected GitHub environment named `npm`.
-4. Push exactly one reviewed release tag and confirm that the package is visible on npm.
-5. In the npm package settings, configure a GitHub Actions trusted publisher for organization/user `ezer-mackenzie`, repository `chile-geo`, workflow `release.yml`, and environment `npm`.
-6. Remove the GitHub `NPM_TOKEN` secret and revoke the bootstrap token. Future releases authenticate through OIDC.
+Before the first publication:
+
+1. Sign in to npm with two-factor authentication enabled.
+2. Create the free public npm organization named `chile-geo`, or confirm that the publishing account has write access to that existing organization.
+3. Create a short-lived granular npm access token with read/write package permission for the `@chile-geo` scope and settings that permit CI publication.
+4. In GitHub, create the protected environment `npm` and add the token as its `NPM_TOKEN` environment secret. Do not add the token to the repository or any tracked `.npmrc` file.
+5. Move the unpublished `v0.9.0` tag to the reviewed repair commit, push `main`, and force-update only that tag with `git push --force origin refs/tags/v0.9.0`.
+6. Confirm that the workflow publishes `@chile-geo/maps@0.9.0` and that `npm view @chile-geo/maps@0.9.0` succeeds.
+7. In the npm package settings, configure a GitHub Actions trusted publisher with user `ezer-mackenzie`, repository `chile-geo`, workflow `release.yml`, environment `npm`, and permission to run `npm publish`.
+8. Remove the GitHub `NPM_TOKEN` secret and revoke the bootstrap token. Future releases authenticate through OIDC.
+
+The release job uses Node 24, npm 11.15 or newer, a GitHub-hosted runner, and `id-token: write`, which satisfy npm trusted-publishing requirements. It also stops before publication when the package does not exist and the bootstrap token is unavailable.
 
 An npm `E404` during the package `PUT` can mean that the scope does not exist or that the current identity cannot publish to it. A successful provenance upload does not prove registry write authorization.
+
+## Registry choice
+
+npm is the primary registry for this library because ordinary Node.js, Bun, npm, pnpm, and Yarn consumers can install it without extra registry configuration. GitHub Packages is a valid secondary registry, but its npm packages must use a GitHub user or organization namespace and consumers may need registry authentication and an `.npmrc` scope mapping. Publishing there would therefore require renaming the package or creating a matching GitHub organization; it does not solve ownership of the `@chile-geo` npm scope.
+
+Do not publish the same package name to multiple registries until npm publication, provenance, support expectations, and version synchronization are stable.
 
 ## Candidate
 
@@ -31,6 +43,8 @@ An npm `E404` during the package `PUT` can mean that the scope does not exist or
 4. Create an annotated `vX.Y.Z-rc.N` tag.
 5. Publish with the `next` npm tag and provenance from CI.
 6. Install the exact candidate in clean 2D and 3D applications.
+
+For this repository, publish and validate `0.9.0` first. The next tag should be `v1.0.0-rc.1`; promote it to `v1.0.0` only after the registry and external-consumer checks pass.
 
 ## Stable release
 

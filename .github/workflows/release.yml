@@ -2,7 +2,11 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    tags: ["v*"]
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -10,31 +14,41 @@ permissions:
 
 jobs:
   publish:
-    if: github.repository_owner != ''
+    if: github.repository == 'ezer-mackenzie/chile-geo'
     runs-on: ubuntu-latest
-    # environment: npm
+    environment: npm
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
-        with: { bun-version: '1.4.0' }
+        with: { bun-version: "1.4.0" }
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version: "24"
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Install a trusted-publishing compatible npm CLI
+        run: npm install --global npm@^11.15.0
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run test:package
       - name: Verify release tag and synchronized package versions
         run: bun run release:check
-      - name: Report npm authentication mode
+      - name: Verify npm publication prerequisites
+        working-directory: packages/maps
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          package_name="$(npm pkg get name | tr -d '"')"
+
           if [[ -n "${NODE_AUTH_TOKEN:-}" ]]; then
-            echo "Using the temporary npm bootstrap token."
+            npm whoami --registry=https://registry.npmjs.org/
+            echo "Using the temporary npm bootstrap token for ${package_name}."
+          elif npm view "${package_name}" name --registry=https://registry.npmjs.org/ >/dev/null 2>&1; then
+            echo "Using npm trusted publishing for the existing package ${package_name}."
           else
-            echo "Using npm trusted publishing through GitHub OIDC."
+            echo "::error::${package_name} does not exist on npm and NPM_TOKEN is unavailable. Create the chile-geo npm organization, add a short-lived granular NPM_TOKEN to the npm GitHub environment, and rerun this release."
+            exit 1
           fi
       - name: Select npm distribution tag
         id: dist-tag

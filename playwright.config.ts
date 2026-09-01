@@ -5,7 +5,9 @@ export default defineConfig({
   testMatch: '**/*.e2e.js',
   timeout: 30_000,
   expect: { timeout: 5_000 },
-  fullyParallel: true,
+  // A single browser process must not create multiple WebGL contexts concurrently
+  // on resource-constrained CI runners. Browser projects still run independently.
+  fullyParallel: false,
   forbidOnly: Boolean(process.env['CI']),
   retries: process.env['CI'] ? 2 : 0,
   reporter: process.env['CI'] ? 'github' : 'list',

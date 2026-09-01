@@ -18,6 +18,7 @@ All notable changes to this project will be documented here. The format follows 
 - Package manifests include consistent author, license, repository, support, and registry metadata.
 - The publish workflow uses the exact GitHub OIDC configuration required by npm and automatic provenance generation.
 - Historical unpublished tags can be selected explicitly from the trusted workflow, including releases that used the former `packages/map-render` path.
+- Browser tests avoid concurrent WebGL context creation within one browser process, preventing intermittent Firefox failures on shared CI runners.
 
 ## [0.8.0] - 2026-09-01
 

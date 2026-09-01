@@ -4,6 +4,17 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-31
+
+### Added
+
+- Custom `colorScale` support shared by the Canvas and Three.js renderers.
+- Typed `RegionColorContext` and `RegionColorScale` exports for application-owned palettes and legends.
+
+### Changed
+
+- Explicit per-record colors continue to take precedence over custom and built-in color scales.
+
 ## [0.3.0] - 2026-08-31
 
 ### Added

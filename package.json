@@ -3,10 +3,9 @@
   "version": "0.9.0",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "engines": {
+    "bun": ">=1.2.0"
+  },
   "scripts": {
     "build": "bun run --filter '*' build",
     "check": "bun run --filter '*' check",
@@ -39,5 +38,8 @@
     "vitepress": "next",
     "vue": "latest"
   },
-  "engines": { "bun": ">=1.2.0" }
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ]
 }

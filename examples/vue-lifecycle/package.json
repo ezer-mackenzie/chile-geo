@@ -1,7 +1,10 @@
 {
   "name": "@chile-geo/example-vue-lifecycle",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "dependencies": { "@chile-geo/maps": "workspace:*", "vue": "^3.5.0" }
+  "dependencies": {
+    "@chile-geo/maps": "workspace:*",
+    "vue": "^3.5.0"
+  }
 }

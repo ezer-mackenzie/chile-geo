@@ -1,7 +1,10 @@
 {
   "name": "@chile-geo/example-vanilla-3d",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
-  "dependencies": { "@chile-geo/maps": "workspace:*", "three": "^0.185.1" }
+  "dependencies": {
+    "@chile-geo/maps": "workspace:*",
+    "three": "^0.185.1"
+  }
 }

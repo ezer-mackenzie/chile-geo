@@ -13,10 +13,10 @@ All notable changes to this project will be documented here. The format follows 
 
 ### Changed
 
-- The release workflow supports a short-lived granular token only at the publish step, then falls back to OIDC trusted publishing.
+- The `publish.yml` workflow uses npm trusted publishing exclusively and never receives a long-lived npm token.
 - Prereleases automatically use the `next` npm tag while stable versions use `latest`.
 - Package manifests include consistent author, license, repository, support, and registry metadata.
-- The release workflow validates first-publication authentication before invoking `npm publish`.
+- The publish workflow uses the exact GitHub OIDC configuration required by npm and automatic provenance generation.
 
 ## [0.8.0] - 2026-09-01
 

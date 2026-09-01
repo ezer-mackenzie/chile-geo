@@ -232,8 +232,8 @@ Only promote to `1.0.0` when no Phase 0 or Phase 1 issues remain and all automat
 ## Immediate next actions
 
 1. Create or verify ownership of the `chile-geo` organization on npm.
-2. Bootstrap `@chile-geo/maps@0.9.0` with a short-lived granular token in the protected GitHub `npm` environment.
-3. Configure npm trusted publishing and immediately revoke the bootstrap token.
+2. Bootstrap `@chile-geo/maps@0.9.0` interactively if npm requires the package to exist before its trusted publisher can be configured.
+3. Configure `publish.yml` as the npm trusted publisher and revoke any bootstrap token.
 4. Install `0.9.0` from npm in two external applications and record any integration issues.
 5. Publish `1.0.0-rc.1` under the `next` dist-tag after the external checks pass.
 6. Observe the candidate, rerun the full verification matrix, and promote the unchanged API to `1.0.0`.

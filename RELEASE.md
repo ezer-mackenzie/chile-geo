@@ -18,14 +18,14 @@ Before the first publication:
 
 1. Sign in to npm with two-factor authentication enabled.
 2. Create the free public npm organization named `chile-geo`, or confirm that the publishing account has write access to that existing organization.
-3. Create a short-lived granular npm access token with read/write package permission for the `@chile-geo` scope and settings that permit CI publication.
-4. In GitHub, create the protected environment `npm` and add the token as its `NPM_TOKEN` environment secret. Do not add the token to the repository or any tracked `.npmrc` file.
-5. Move the unpublished `v0.9.0` tag to the reviewed repair commit, push `main`, and force-update only that tag with `git push --force origin refs/tags/v0.9.0`.
-6. Confirm that the workflow publishes `@chile-geo/maps@0.9.0` and that `npm view @chile-geo/maps@0.9.0` succeeds.
-7. In the npm package settings, configure a GitHub Actions trusted publisher with user `ezer-mackenzie`, repository `chile-geo`, workflow `release.yml`, environment `npm`, and permission to run `npm publish`.
-8. Remove the GitHub `NPM_TOKEN` secret and revoke the bootstrap token. Future releases authenticate through OIDC.
+3. Publish the package once interactively or with npm staged publishing if npm does not yet expose package settings for the unpublished name. Do not place this bootstrap credential in the repository.
+4. In GitHub, create the protected environment named `npm` and add deployment approval rules if desired. No npm token is required by the workflow.
+5. In the npm package settings, configure a GitHub Actions trusted publisher with user `ezer-mackenzie`, repository `chile-geo`, workflow `publish.yml`, environment `npm`, and permission to run `npm publish`.
+6. Move the unpublished `v0.9.0` tag to the reviewed repair commit, push `main`, and force-update only that tag with `git push --force origin refs/tags/v0.9.0`.
+7. Confirm that the workflow publishes `@chile-geo/maps@0.9.0` and that `npm view @chile-geo/maps@0.9.0` succeeds.
+8. Revoke any bootstrap token. Future releases authenticate exclusively through OIDC.
 
-The release job uses Node 24, npm 11.15 or newer, a GitHub-hosted runner, and `id-token: write`, which satisfy npm trusted-publishing requirements. It also stops before publication when the package does not exist and the bootstrap token is unavailable.
+The publish job uses Node 24, npm 11.15 or newer, a GitHub-hosted runner, and `id-token: write`, which satisfy npm trusted-publishing requirements. It does not receive `NPM_TOKEN`; npm exchanges the GitHub OIDC identity for a short-lived publish credential during `npm publish`.
 
 An npm `E404` during the package `PUT` can mean that the scope does not exist or that the current identity cannot publish to it. A successful provenance upload does not prove registry write authorization.
 

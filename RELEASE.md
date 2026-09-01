@@ -18,12 +18,12 @@ Before the first publication:
 
 1. Sign in to npm with two-factor authentication enabled.
 2. Create the free public npm organization named `chile-geo`, or confirm that the publishing account has write access to that existing organization.
-3. Publish the package once interactively or with npm staged publishing if npm does not yet expose package settings for the unpublished name. Do not place this bootstrap credential in the repository.
-4. In GitHub, create the protected environment named `npm` and add deployment approval rules if desired. No npm token is required by the workflow.
-5. In the npm package settings, configure a GitHub Actions trusted publisher with user `ezer-mackenzie`, repository `chile-geo`, workflow `publish.yml`, environment `npm`, and permission to run `npm publish`.
-6. Move the unpublished `v0.9.0` tag to the reviewed repair commit, push `main`, and force-update only that tag with `git push --force origin refs/tags/v0.9.0`.
-7. Confirm that the workflow publishes `@chile-geo/maps@0.9.0` and that `npm view @chile-geo/maps@0.9.0` succeeds.
-8. Revoke any bootstrap token. Future releases authenticate exclusively through OIDC.
+3. Create a short-lived granular token that can publish public packages in the `@chile-geo` scope.
+4. In GitHub, create the protected environment named `npm`, add deployment approval rules if desired, and store the temporary token as its `NPM_TOKEN` secret.
+5. Run the confirmation-gated `Bootstrap npm Package` workflow once. It can publish only `@chile-geo/maps@0.1.0` from tag `v0.1.0`.
+6. In the npm package settings, configure a GitHub Actions trusted publisher with user `ezer-mackenzie`, repository `chile-geo`, workflow `publish.yml`, environment `npm`, and permission to run `npm publish`.
+7. Remove the GitHub `NPM_TOKEN` secret and revoke the bootstrap token.
+8. Publish every later version through `publish.yml`, which authenticates exclusively through OIDC.
 
 The publish job uses Node 24, npm 11.15 or newer, a GitHub-hosted runner, and `id-token: write`, which satisfy npm trusted-publishing requirements. It does not receive `NPM_TOKEN`; npm exchanges the GitHub OIDC identity for a short-lived publish credential during `npm publish`.
 
@@ -33,9 +33,13 @@ An npm `E404` during the package `PUT` can mean that the scope does not exist or
 
 Versions `0.1.0` through `0.9.0` were never accepted by npm and may therefore be published in order. Do not move their tags after any version reaches the registry.
 
-1. Publish `0.1.0` as the one-time authenticated bootstrap because npm requires an existing package before its trusted publisher can be configured.
-2. Configure `publish.yml` as the package's trusted publisher using the `npm` GitHub environment.
-3. Run the `Publish Package` workflow manually for each remaining tag, in ascending order:
+1. Confirm that the npm organization `chile-geo` exists and that the token owner has permission to publish public packages in its scope.
+2. Add a short-lived granular token as `NPM_TOKEN` in the protected GitHub environment named `npm`.
+3. Run the one-time `Bootstrap npm Package` workflow with confirmation `publish-v0.1.0`. It is hard-coded to tag `v0.1.0` and cannot publish another version.
+4. Confirm that `npm view @chile-geo/maps@0.1.0` succeeds.
+5. Configure `publish.yml` as the package's trusted publisher using the `npm` GitHub environment.
+6. Remove `NPM_TOKEN` from GitHub and revoke it on npm.
+7. Run the `Publish Package` workflow manually for each remaining tag, in ascending order:
 
 ```bash
 gh workflow run publish.yml -f release_tag=v0.2.0

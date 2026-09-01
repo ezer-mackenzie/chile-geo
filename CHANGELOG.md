@@ -4,6 +4,19 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-31
+
+### Added
+
+- Public metadata and runtime validation for all 16 Chilean region identifiers.
+- Independent Vanilla 2D, Vanilla 3D, and Vue lifecycle examples.
+- Browser coverage for UMD loading, pointer interaction, visual output, update performance, and GPU resource cleanup.
+- Public `0.x` migration guidance.
+
+### Changed
+
+- Expanded package verification to cover the `/regions` entry point and all example builds.
+
 ## [0.1.0] - 2026-08-31
 
 ### Added

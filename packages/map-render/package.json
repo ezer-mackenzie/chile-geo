@@ -1,6 +1,6 @@
 {
   "name": "@chile-geo/maps",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Typed Canvas and Three.js maps for Chilean geographic analytics",
   "type": "module",
   "main": "./dist/index.umd.cjs",

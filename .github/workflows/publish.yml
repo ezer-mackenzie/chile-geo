@@ -70,8 +70,8 @@ jobs:
         env:
           RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
-          package_name="$(npm pkg get name | tr -d '"')"
-          package_version="$(npm pkg get version | tr -d '"')"
+          package_name="$(bun -p "require('./package.json').name")"
+          package_version="$(bun -p "require('./package.json').version")"
 
           if [[ "${package_name}" != "@chile-geo/maps" ]]; then
             echo "::error::Unexpected package name ${package_name}."
@@ -84,7 +84,7 @@ jobs:
           fi
 
           for manifest in ../../package.json ../../packages/data-geojson/package.json ../../packages/data-topojson/package.json; do
-            manifest_version="$(node -p "require('./${manifest}').version")"
+            manifest_version="$(bun -p "require('./${manifest}').version")"
             if [[ "${manifest_version}" != "${package_version}" ]]; then
               echo "::error::${manifest} is ${manifest_version}; expected ${package_version}."
               exit 1
@@ -96,7 +96,7 @@ jobs:
         working-directory: ${{ steps.package.outputs.directory }}
         shell: bash
         run: |
-          version="$(npm pkg get version | tr -d '"')"
+          version="$(bun -p "require('./package.json').version")"
           if [[ "${version}" == *-* ]]; then
             echo "value=next" >> "${GITHUB_OUTPUT}"
           else

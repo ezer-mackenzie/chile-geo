@@ -9,7 +9,7 @@
 | `value` | `number` | Value used for normalization |
 | `color` | `string?` | Optional CSS color override |
 
-`BaseMapOptions` requires `container` and optionally accepts `defaultColor`, `onRegionClick`, and `onRegionHover`. `Map2DOptions` adds `pixelRatio`, `strokeColor`, and `strokeWidth`. `Map3DOptions` adds `maxExtrusionDepth` and `enableControls`.
+`BaseMapOptions` requires `container` and optionally accepts `defaultColor`, `selectedColor`, `onRegionClick`, and `onRegionHover`. `Map2DOptions` adds `pixelRatio`, `strokeColor`, and `strokeWidth`. `Map3DOptions` adds `maxExtrusionDepth` and `enableControls`.
 
 ## Region metadata
 

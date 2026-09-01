@@ -22,6 +22,13 @@ test.describe('Chile2DMap', () => {
       return original === document.querySelector('canvas');
     })).toBe(true);
     expect(await page.evaluate(() => {
+      const map = window.chileMap;
+      const selected = map.selectRegion('CL-RM');
+      const id = map.selectedRegionId;
+      map.clearSelection();
+      return { selected, id, cleared: map.selectedRegionId === undefined, rejected: map.selectRegion('CL-UNKNOWN') };
+    })).toEqual({ selected: true, id: 'CL-RM', cleared: true, rejected: false });
+    expect(await page.evaluate(() => {
       const start = performance.now();
       for (let index = 0; index < 100; index++) window.updateMetrics();
       return performance.now() - start;
@@ -67,6 +74,13 @@ test.describe('Chile3DMap', () => {
       return { sameElement: element === map.renderer.domElement, groups: map.mainGroup.children.length, name: map.mainGroup.name };
     });
     expect(result).toEqual({ sameElement: true, groups: 16, name: 'ChileMainGroup' });
+    expect(await page.evaluate(() => {
+      const map = window.chileMap;
+      const selected = map.selectRegion('CL-RM');
+      const id = map.selectedRegionId;
+      map.clearSelection();
+      return { selected, id, cleared: map.selectedRegionId === undefined, rejected: map.selectRegion('CL-UNKNOWN') };
+    })).toEqual({ selected: true, id: 'CL-RM', cleared: true, rejected: false });
     expect(await page.evaluate(() => {
       const start = performance.now();
       for (let index = 0; index < 100; index++) window.updateMetrics();

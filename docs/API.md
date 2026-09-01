@@ -17,6 +17,7 @@ Rendering and callbacks match records by `id`. The bundled geographic name is pa
 | --- | --- | --- |
 | `container` | required | Host element that owns the renderer |
 | `defaultColor` | `#94a3b8` | Fill used when no positive metric is available |
+| `selectedColor` | renderer-specific | Outline or emissive color used for the selected region |
 | `onRegionClick` | none | Called when a region is clicked |
 | `onRegionHover` | none | Called once when the pointer enters a different region |
 
@@ -26,6 +27,9 @@ Import from `@chile-geo/maps/2d` to exclude Three.js from the dependency graph. 
 
 - `canvas`: canvas created inside the container.
 - `updateData(dataSeries)`: atomically replaces values and schedules a redraw.
+- `selectRegion(regionId)`: selects a known region and returns whether it was found.
+- `clearSelection()`: clears the selected region.
+- `selectedRegionId`: currently selected public identifier, if any.
 - `destroy()`: cancels drawing, removes listeners and observers, and removes the canvas.
 
 ## `Chile3DMap`
@@ -37,6 +41,9 @@ Import from `@chile-geo/maps/3d`. The application must provide the `three` peer 
 - `renderer`: WebGL renderer attached to the container.
 - `mainGroup`: root group named `ChileMainGroup` containing every region.
 - `updateData(dataSeries)`: updates mesh metadata, colors, and Z scale without recreating the renderer.
+- `selectRegion(regionId)`: selects a known region and returns whether it was found.
+- `clearSelection()`: clears the selected region.
+- `selectedRegionId`: currently selected public identifier, if any.
 - `destroy()`: stops animation and disposes controls, geometries, materials, listeners, and renderer.
 
 Each intersectable mesh stores `regionId`, `regionName`, and supplied metric fields in `mesh.userData`.

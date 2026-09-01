@@ -8,6 +8,7 @@ export interface RegionData {
 export interface BaseMapOptions {
   container: HTMLElement;
   defaultColor?: string;
+  selectedColor?: string;
   onRegionClick?: (regionName: string, data?: RegionData) => void;
   onRegionHover?: (regionName: string, data?: RegionData) => void;
 }

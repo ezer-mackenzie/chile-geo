@@ -14,6 +14,7 @@ export class Chile2DMap {
   private readonly resizeObserver: ResizeObserver;
   private frame: number | undefined;
   private hovered: RegionFeature | undefined;
+  private selectedId: string | undefined;
   private focusedIndex = 0;
   private destroyed = false;
 
@@ -55,6 +56,30 @@ export class Chile2DMap {
     for (const [id, item] of prepared.byId) this.data.set(id, item);
     this.scheduleDraw();
   }
+
+  /** Selects a region by its public identifier without emitting callbacks. */
+  selectRegion(regionId: string): boolean {
+    if (this.destroyed) return false;
+    const index = geography.features.findIndex((feature) => feature.properties.id === regionId);
+    if (index < 0) return false;
+    this.selectedId = regionId;
+    this.focusedIndex = index;
+    const feature = geography.features[index];
+    if (feature) this.canvas.setAttribute('aria-label', `Interactive map of Chile. Selected: ${feature.properties.name}`);
+    this.scheduleDraw();
+    return true;
+  }
+
+  /** Clears the current region selection. */
+  clearSelection(): void {
+    if (this.destroyed || this.selectedId === undefined) return;
+    this.selectedId = undefined;
+    this.canvas.setAttribute('aria-label', 'Interactive map of Chile');
+    this.scheduleDraw();
+  }
+
+  /** Returns the selected public region identifier, if any. */
+  get selectedRegionId(): string | undefined { return this.selectedId; }
 
   /**
    * Destroys the Chile2DMap instance, removing event listeners, disconnecting the resize observer, canceling any scheduled draw frames, and removing the canvas from the DOM. After calling this method, the instance should not be used again.
@@ -110,6 +135,12 @@ export class Chile2DMap {
       this.context.lineWidth = this.options.strokeWidth ?? 0.75;
       this.context.stroke(path);
       this.paths.set(feature, path);
+
+      if (feature.properties.id === this.selectedId) {
+        this.context.strokeStyle = this.options.selectedColor ?? '#0f172a';
+        this.context.lineWidth = Math.max(2, (this.options.strokeWidth ?? 0.75) * 2);
+        this.context.stroke(path);
+      }
     }
   }
 
@@ -144,7 +175,10 @@ export class Chile2DMap {
    */
   private readonly handleClick = (event: MouseEvent): void => {
     const feature = this.featureAt(event);
-    if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+    if (feature) {
+      this.selectRegion(feature.properties.id);
+      this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+    }
   };
 
   /**
@@ -157,7 +191,10 @@ export class Chile2DMap {
 
     if (event.key === 'Enter' || event.key === ' ') {
       const feature = geography.features[this.focusedIndex];
-      if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+      if (feature) {
+        this.selectRegion(feature.properties.id);
+        this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+      }
       return;
     }
 

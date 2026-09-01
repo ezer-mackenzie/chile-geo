@@ -27,6 +27,7 @@ export class Chile3DMap {
   private animationFrame = 0;
   private focusedIndex = 0;
   private hoveredId: string | undefined;
+  private selectedId: string | undefined;
   private destroyed = false;
 
   constructor(options: Map3DOptions) {
@@ -77,10 +78,36 @@ export class Chile3DMap {
         mesh.userData = item ? { ...item, regionId: id, regionName: group.userData.regionName } : { regionId: id, regionName: group.userData.regionName };
         mesh.scale.z = depth;
         mesh.material.color.set(item?.color ?? metricColor(item?.value ?? 0, maximum, this.options.defaultColor ?? '#94a3b8'));
+        this.applySelectionStyle(mesh, id === this.selectedId);
       }
     }
     this.render();
   }
+
+  /** Selects a region by its public identifier without emitting callbacks. */
+  selectRegion(regionId: string): boolean {
+    if (this.destroyed) return false;
+    const region = this.regions.get(regionId);
+    if (!region) return false;
+    this.selectedId = regionId;
+    this.focusedIndex = geography.features.findIndex((feature) => feature.properties.id === regionId);
+    this.renderer.domElement.setAttribute('aria-label', `Interactive 3D map of Chile. Selected: ${region.userData.regionName}`);
+    this.refreshSelectionStyles();
+    this.render();
+    return true;
+  }
+
+  /** Clears the current region selection. */
+  clearSelection(): void {
+    if (this.destroyed || this.selectedId === undefined) return;
+    this.selectedId = undefined;
+    this.renderer.domElement.setAttribute('aria-label', 'Interactive 3D map of Chile');
+    this.refreshSelectionStyles();
+    this.render();
+  }
+
+  /** Returns the selected public region identifier, if any. */
+  get selectedRegionId(): string | undefined { return this.selectedId; }
 
   destroy(): void {
     if (this.destroyed) return;
@@ -125,6 +152,17 @@ export class Chile3DMap {
     return shape;
   }
 
+  private applySelectionStyle(mesh: THREE.Mesh<THREE.ExtrudeGeometry, THREE.MeshStandardMaterial>, selected: boolean): void {
+    mesh.material.emissive.set(selected ? (this.options.selectedColor ?? '#334155') : '#000000');
+    mesh.material.emissiveIntensity = selected ? 0.65 : 0;
+  }
+
+  private refreshSelectionStyles(): void {
+    for (const [id, group] of this.regions) for (const child of group.children) {
+      this.applySelectionStyle(child as THREE.Mesh<THREE.ExtrudeGeometry, THREE.MeshStandardMaterial>, id === this.selectedId);
+    }
+  }
+
   private readonly resize = (): void => {
     const { width, height } = this.options.container.getBoundingClientRect();
     const safeWidth = Math.max(1, width), safeHeight = Math.max(1, height);
@@ -164,14 +202,20 @@ export class Chile3DMap {
   private readonly handleClick = (event: MouseEvent): void => {
     const id = this.intersect(event)?.userData['regionId'] as string | undefined;
     const region = id ? this.regions.get(id) : undefined;
-    if (id && region) this.options.onRegionClick?.(region.userData.regionName, this.data.get(id));
+    if (id && region) {
+      this.selectRegion(id);
+      this.options.onRegionClick?.(region.userData.regionName, this.data.get(id));
+    }
   };
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
     if (!['ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'Enter', ' '].includes(event.key)) return;
     event.preventDefault();
     if (event.key === 'Enter' || event.key === ' ') {
       const feature = geography.features[this.focusedIndex];
-      if (feature) this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+      if (feature) {
+        this.selectRegion(feature.properties.id);
+        this.options.onRegionClick?.(feature.properties.name, this.data.get(feature.properties.id));
+      }
       return;
     }
     const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;

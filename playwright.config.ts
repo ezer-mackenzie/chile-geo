@@ -16,8 +16,9 @@ export default defineConfig({
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   webServer: {
-    command: process.env['PLAYWRIGHT_WEB_SERVER_COMMAND'] ?? './node_modules/.bin/vite tests/browser/app --host 127.0.0.1 --port 4173',
+    command: process.env['PLAYWRIGHT_WEB_SERVER_COMMAND'] ?? 'bunx --bun vite tests/browser/app --host 127.0.0.1 --port 4173 --force',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env['CI'],
+    timeout: 120_000,
   },
 });

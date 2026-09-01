@@ -4,6 +4,17 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-31
+
+### Added
+
+- Uniform programmatic region selection for both renderers through `selectRegion`, `clearSelection`, and `selectedRegionId`.
+- Configurable `selectedColor` highlighting for Canvas outlines and Three.js emissive materials.
+
+### Changed
+
+- Pointer and keyboard activation now keep the public selection state synchronized.
+
 ## [0.2.0] - 2026-08-31
 
 ### Added

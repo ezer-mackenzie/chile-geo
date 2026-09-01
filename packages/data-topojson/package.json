@@ -1,6 +1,6 @@
 {
   "name": "@chile-geo/data-topojson",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Ultra-lightweight TopoJSON datasets of Chile for web visualization",
   "private": true,
   "type": "module",

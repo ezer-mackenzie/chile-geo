@@ -4,6 +4,18 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-01
+
+### Added
+
+- Uniform `setVisibleRegions` filtering and `visibleRegionIds` inspection in both renderers.
+
+### Changed
+
+- Hidden regions are excluded from drawing, raycasting, keyboard navigation, and programmatic selection.
+- Hiding a selected region safely clears the current selection.
+- The 2D renderer budget is now 2.5 KB gzip to accommodate the public visibility API while retaining strict regression detection.
+
 ## [0.6.0] - 2026-08-31
 
 ### Added

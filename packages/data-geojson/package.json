@@ -1,6 +1,6 @@
 {
   "name": "@chile-geo/data-geojson",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Pure, optimized GeoJSON datasets of Chile for any programming language",
   "private": true,
   "type": "module",

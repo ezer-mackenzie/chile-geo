@@ -33,6 +33,8 @@ Import from `@chile-geo/maps/2d` to exclude Three.js from the dependency graph. 
 - `selectRegion(regionId)`: selects a known region and returns whether it was found.
 - `clearSelection()`: clears the selected region.
 - `selectedRegionId`: currently selected public identifier, if any.
+- `setVisibleRegions(regionIds?)`: filters rendered and interactive regions; omit IDs to restore all.
+- `visibleRegionIds`: visible identifiers in canonical geographic order.
 - `destroy()`: cancels drawing, removes listeners and observers, and removes the canvas.
 
 ## `Chile3DMap`
@@ -47,6 +49,8 @@ Import from `@chile-geo/maps/3d`. The application must provide the `three` peer 
 - `selectRegion(regionId)`: selects a known region and returns whether it was found.
 - `clearSelection()`: clears the selected region.
 - `selectedRegionId`: currently selected public identifier, if any.
+- `setVisibleRegions(regionIds?)`: filters rendered and interactive region groups; omit IDs to restore all.
+- `visibleRegionIds`: visible identifiers in canonical geographic order.
 - `requestRender()`: schedules a frame after direct scene or camera changes.
 - `destroy()`: stops animation and disposes controls, geometries, materials, listeners, and renderer.
 

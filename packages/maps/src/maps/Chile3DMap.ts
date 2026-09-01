@@ -29,6 +29,7 @@ export class Chile3DMap {
   private focusedIndex = 0;
   private hoveredId: string | undefined;
   private selectedId: string | undefined;
+  private visibleIds: Set<string> | undefined;
   private destroyed = false;
 
   constructor(options: Map3DOptions) {
@@ -96,11 +97,27 @@ export class Chile3DMap {
     this.requestRender();
   }
 
+  /** Shows only the supplied region IDs. Pass undefined to restore all regions. */
+  setVisibleRegions(regionIds?: readonly string[]): void {
+    if (this.destroyed) return;
+    this.visibleIds = regionIds === undefined ? undefined : new Set(regionIds.filter((id) => this.regions.has(id)));
+    for (const [id, group] of this.regions) group.visible = this.isVisible(id);
+    if (this.selectedId && !this.isVisible(this.selectedId)) this.clearSelection();
+    const firstVisible = geography.features.findIndex((feature) => this.isVisible(feature.properties.id));
+    this.focusedIndex = Math.max(0, firstVisible);
+    this.requestRender();
+  }
+
+  /** Returns visible region IDs in canonical geographic order. */
+  get visibleRegionIds(): readonly string[] {
+    return geography.features.filter((feature) => this.isVisible(feature.properties.id)).map((feature) => feature.properties.id);
+  }
+
   /** Selects a region by its public identifier without emitting callbacks. */
   selectRegion(regionId: string): boolean {
     if (this.destroyed) return false;
     const region = this.regions.get(regionId);
-    if (!region) return false;
+    if (!region || !this.isVisible(regionId)) return false;
     this.selectedId = regionId;
     this.focusedIndex = geography.features.findIndex((feature) => feature.properties.id === regionId);
     this.renderer.domElement.setAttribute('aria-label', `Interactive 3D map of Chile. Selected: ${region.userData.regionName}`);
@@ -207,7 +224,24 @@ export class Chile3DMap {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.pointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     this.raycaster.setFromCamera(this.pointer, this.camera);
-    return this.raycaster.intersectObjects(this.mainGroup.children, true)[0]?.object;
+    return this.raycaster.intersectObjects(this.mainGroup.children, true).find((hit) => {
+      const id = hit.object.userData['regionId'] as string | undefined;
+      return id ? this.isVisible(id) : false;
+    })?.object;
+  }
+
+  private isVisible(regionId: string): boolean { return this.visibleIds?.has(regionId) ?? true; }
+
+  private moveFocus(direction: 1 | -1): RegionFeatureCollection['features'][number] | undefined {
+    for (let offset = 1; offset <= geography.features.length; offset++) {
+      const index = (this.focusedIndex + direction * offset + geography.features.length) % geography.features.length;
+      const feature = geography.features[index];
+      if (feature && this.isVisible(feature.properties.id)) {
+        this.focusedIndex = index;
+        return feature;
+      }
+    }
+    return undefined;
   }
 
   private readonly handlePointerMove = (event: PointerEvent): void => {
@@ -240,8 +274,7 @@ export class Chile3DMap {
       return;
     }
     const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
-    this.focusedIndex = (this.focusedIndex + direction + geography.features.length) % geography.features.length;
-    const feature = geography.features[this.focusedIndex];
+    const feature = this.moveFocus(direction);
     if (feature) {
       this.renderer.domElement.setAttribute('aria-label', `Interactive 3D map of Chile. Selected: ${feature.properties.name}`);
       this.options.onRegionHover?.(feature.properties.name, this.data.get(feature.properties.id));

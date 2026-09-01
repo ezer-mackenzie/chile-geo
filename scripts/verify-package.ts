@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 const workspace = join(import.meta.dir, '..');
-const packageDirectory = join(workspace, 'packages/map-render');
+const packageDirectory = join(workspace, 'packages/maps');
 const temporary = await mkdtemp(join(tmpdir(), 'chile-geo-package-'));
 
 async function run(command: string[], cwd = workspace): Promise<string> {

@@ -15,6 +15,7 @@ export class Chile2DMap {
   private frame: number | undefined;
   private hovered: RegionFeature | undefined;
   private selectedId: string | undefined;
+  private visibleIds: Set<string> | undefined;
   private focusedIndex = 0;
   private destroyed = false;
 
@@ -57,11 +58,27 @@ export class Chile2DMap {
     this.scheduleDraw();
   }
 
+  /** Shows only the supplied region IDs. Pass undefined to restore all regions. */
+  setVisibleRegions(regionIds?: readonly string[]): void {
+    if (this.destroyed) return;
+    const knownIds = new Set(geography.features.map((feature) => feature.properties.id));
+    this.visibleIds = regionIds === undefined ? undefined : new Set(regionIds.filter((id) => knownIds.has(id)));
+    if (this.selectedId && !this.isVisible(this.selectedId)) this.clearSelection();
+    const firstVisible = geography.features.findIndex((feature) => this.isVisible(feature.properties.id));
+    this.focusedIndex = Math.max(0, firstVisible);
+    this.scheduleDraw();
+  }
+
+  /** Returns visible region IDs in canonical geographic order. */
+  get visibleRegionIds(): readonly string[] {
+    return geography.features.filter((feature) => this.isVisible(feature.properties.id)).map((feature) => feature.properties.id);
+  }
+
   /** Selects a region by its public identifier without emitting callbacks. */
   selectRegion(regionId: string): boolean {
     if (this.destroyed) return false;
     const index = geography.features.findIndex((feature) => feature.properties.id === regionId);
-    if (index < 0) return false;
+    if (index < 0 || !this.isVisible(regionId)) return false;
     this.selectedId = regionId;
     this.focusedIndex = index;
     const feature = geography.features[index];
@@ -120,6 +137,7 @@ export class Chile2DMap {
 
     this.paths.clear();
     for (const feature of geography.features) {
+      if (!this.isVisible(feature.properties.id)) continue;
       const path = new Path2D();
       for (const polygon of polygonsOf(feature)) for (const ring of polygon) {
         ring.forEach((position, index) => {
@@ -159,6 +177,20 @@ export class Chile2DMap {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     return [...this.paths].reverse().find(([, path]) => this.context.isPointInPath(path, x, y, 'evenodd'))?.[0];
+  }
+
+  private isVisible(regionId: string): boolean { return this.visibleIds?.has(regionId) ?? true; }
+
+  private moveFocus(direction: 1 | -1): RegionFeature | undefined {
+    for (let offset = 1; offset <= geography.features.length; offset++) {
+      const index = (this.focusedIndex + direction * offset + geography.features.length) % geography.features.length;
+      const feature = geography.features[index];
+      if (feature && this.isVisible(feature.properties.id)) {
+        this.focusedIndex = index;
+        return feature;
+      }
+    }
+    return undefined;
   }
 
   /**
@@ -206,9 +238,7 @@ export class Chile2DMap {
     }
 
     const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
-    this.focusedIndex = (this.focusedIndex + direction + geography.features.length) % geography.features.length;
-
-    const feature = geography.features[this.focusedIndex];
+    const feature = this.moveFocus(direction);
     if (feature) {
       this.canvas.setAttribute('aria-label', `Interactive map of Chile. Selected: ${feature.properties.name}`);
       this.options.onRegionHover?.(feature.properties.name, this.data.get(feature.properties.id));

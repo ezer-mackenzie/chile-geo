@@ -1,5 +1,5 @@
-import { Chile2DMap, type RegionColorScale } from '../../../packages/map-render/src/2d';
-import { Chile3DMap, type Map3DOptions } from '../../../packages/map-render/src/3d';
+import { Chile2DMap, type RegionColorScale } from '../../../packages/maps/src/2d';
+import { Chile3DMap, type Map3DOptions } from '../../../packages/maps/src/3d';
 
 declare global { interface Window { chileMap: Chile2DMap | Chile3DMap; colorScaleCalls: number; colorScaleMaximum: number; updateMetrics(): void; destroyMap(): void } }
 

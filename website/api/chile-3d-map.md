@@ -13,6 +13,8 @@ Public API:
 - `selectRegion(regionId: string): boolean`
 - `clearSelection(): void`
 - `readonly selectedRegionId: string | undefined`
+- `setVisibleRegions(regionIds?: readonly string[]): void`
+- `readonly visibleRegionIds: readonly string[]`
 - `destroy(): void`
 
 `mainGroup` is named `ChileMainGroup` and contains one group per region. Intersectable meshes store `regionId`, `regionName`, and metric fields in `userData`. Default maximum extrusion depth is `3`; controls are disabled by default. Selection uses an emissive highlight and can be customized with `selectedColor`.

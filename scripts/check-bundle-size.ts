@@ -1,10 +1,10 @@
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const dist = join(import.meta.dir, '../packages/map-render/dist');
+const dist = join(import.meta.dir, '../packages/maps/dist');
 const files = await readdir(dist);
 const budgets = [
-  { label: '2D renderer', prefix: 'Chile2DMap-', maximumGzipBytes: 2_000 },
+  { label: '2D renderer', prefix: 'Chile2DMap-', maximumGzipBytes: 2_500 },
   { label: '3D renderer', prefix: 'Chile3DMap-', maximumGzipBytes: 8_000 },
   { label: 'region metadata', exact: 'regions.js', maximumGzipBytes: 1_000 },
   { label: 'geographic asset chunk', prefix: 'chile-topography-', maximumGzipBytes: 90_000 },

@@ -31,3 +31,7 @@ No migration is required. Applications that previously duplicated or imported in
 ## From 0.5 to 0.6
 
 No migration is required for ordinary maps. A 3D map without controls now coalesces updates and renders on demand. Applications that animate custom scene objects must set `animationMode: 'continuous'`, or call `requestRender()` after each direct change.
+
+## From 0.6 to 0.7
+
+No migration is required. Both renderers now support `setVisibleRegions`; filtered regions are excluded from rendering, pointer interaction, keyboard navigation, and programmatic selection.

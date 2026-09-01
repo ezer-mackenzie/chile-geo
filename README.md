@@ -79,9 +79,9 @@ Call `map.destroy()` before removing the owning view. It disconnects observers a
 
 ## API
 
-Both map classes implement `updateData(dataSeries: RegionData[]): void`, programmatic selection, and `destroy(): void`. `updateData` replaces the current metric snapshot without recreating the Canvas or WebGL context. Values are normalized against the largest positive value in the supplied series. Negative and non-finite values render at zero, unknown IDs are ignored, and the last duplicate ID wins. A custom `colorScale` can own the complete palette, while a per-region `color` has the highest priority.
+Both map classes implement `updateData(dataSeries: RegionData[]): void`, programmatic selection, visibility filtering, and `destroy(): void`. `updateData` replaces the current metric snapshot without recreating the Canvas or WebGL context. Values are normalized against the largest positive value in the supplied series. Negative and non-finite values render at zero, unknown IDs are ignored, and the last duplicate ID wins. A custom `colorScale` can own the complete palette, while a per-region `color` has the highest priority.
 
-See the [API reference](docs/API.md), [data notes](docs/DATA.md), and package [README](packages/map-render/README.md).
+See the [API reference](docs/API.md), [data notes](docs/DATA.md), and package [README](packages/maps/README.md).
 
 Import `CHILE_REGIONS`, `isChileRegionId`, and the `ChileRegionId` type from `/2d`, `/3d`, or `/regions` when building legends, selectors, and validated inputs.
 

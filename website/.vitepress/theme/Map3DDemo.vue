@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-import type { Chile3DMap } from '../../../packages/map-render/src/3d';
+import type { Chile3DMap } from '../../../packages/maps/src/3d';
 
 const host = ref<HTMLElement>();
 let map: Chile3DMap | undefined;
 onMounted(async () => {
-  const { Chile3DMap } = await import('../../../packages/map-render/src/3d');
+    const { Chile3DMap } = await import('../../../packages/maps/src/3d');
   map = new Chile3DMap({ container: host.value!, enableControls: true, maxExtrusionDepth: 3 });
   map.updateData([
     { id: 'CL-RM', name: 'Santiago Metropolitan Region', value: 90 },

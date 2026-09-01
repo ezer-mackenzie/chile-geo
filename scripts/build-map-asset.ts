@@ -2,8 +2,8 @@ import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 const source = process.argv[2] ?? join(import.meta.dir, '../packages/data-geojson/dist/regions.geojson');
-const target = join(import.meta.dir, '../packages/map-render/src/assets/chile-topography.json');
-const metadataTarget = join(import.meta.dir, '../packages/map-render/src/assets/chile-topography.meta.json');
+const target = join(import.meta.dir, '../packages/maps/src/assets/chile-topography.json');
+const metadataTarget = join(import.meta.dir, '../packages/maps/src/assets/chile-topography.meta.json');
 const isoByCode: Record<string, string> = {
   '1': 'CL-TA', '2': 'CL-AN', '3': 'CL-AT', '4': 'CL-CO', '5': 'CL-VS', '6': 'CL-LI',
   '7': 'CL-ML', '8': 'CL-BI', '9': 'CL-AR', '10': 'CL-LL', '11': 'CL-AI', '12': 'CL-MA',

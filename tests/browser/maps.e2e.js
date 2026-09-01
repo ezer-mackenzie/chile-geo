@@ -29,6 +29,14 @@ test.describe('Chile2DMap', () => {
       return { selected, id, cleared: map.selectedRegionId === undefined, rejected: map.selectRegion('CL-UNKNOWN') };
     })).toEqual({ selected: true, id: 'CL-RM', cleared: true, rejected: false });
     expect(await page.evaluate(() => {
+      const map = window.chileMap;
+      map.setVisibleRegions(['CL-RM', 'CL-UNKNOWN']);
+      const filtered = [...map.visibleRegionIds];
+      const hiddenSelection = map.selectRegion('CL-VS');
+      map.setVisibleRegions();
+      return { filtered, hiddenSelection, restored: map.visibleRegionIds.length };
+    })).toEqual({ filtered: ['CL-RM'], hiddenSelection: false, restored: 16 });
+    expect(await page.evaluate(() => {
       const start = performance.now();
       for (let index = 0; index < 100; index++) window.updateMetrics();
       return performance.now() - start;
@@ -99,6 +107,15 @@ test.describe('Chile3DMap', () => {
       return { selected, id, cleared: map.selectedRegionId === undefined, rejected: map.selectRegion('CL-UNKNOWN') };
     })).toEqual({ selected: true, id: 'CL-RM', cleared: true, rejected: false });
     expect(await page.evaluate(() => {
+      const map = window.chileMap;
+      map.setVisibleRegions(['CL-RM', 'CL-UNKNOWN']);
+      const filtered = [...map.visibleRegionIds];
+      const visibleGroups = map.mainGroup.children.filter((group) => group.visible).length;
+      const hiddenSelection = map.selectRegion('CL-VS');
+      map.setVisibleRegions();
+      return { filtered, visibleGroups, hiddenSelection, restored: map.visibleRegionIds.length };
+    })).toEqual({ filtered: ['CL-RM'], visibleGroups: 1, hiddenSelection: false, restored: 16 });
+    expect(await page.evaluate(() => {
       const start = performance.now();
       for (let index = 0; index < 100; index++) window.updateMetrics();
       return performance.now() - start;
@@ -152,7 +169,7 @@ test.describe('UMD distribution', () => {
     await page.goto('/blank.html');
     const threeUrl = `/@fs${join(process.cwd(), 'node_modules/three/build/three.module.js')}`;
     await page.evaluate(async (url) => { window.THREE = await import(url); }, threeUrl);
-    await page.addScriptTag({ path: join(process.cwd(), 'packages/map-render/dist/index.umd.cjs') });
+    await page.addScriptTag({ path: join(process.cwd(), 'packages/maps/dist/index.umd.cjs') });
     const result = await page.evaluate(() => {
       const container = document.querySelector('#map');
       const twoDimensional = new window.ChileGeo.Chile2DMap({ container });

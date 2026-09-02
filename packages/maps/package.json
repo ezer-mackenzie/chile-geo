@@ -1,6 +1,6 @@
 {
   "name": "@chile-geo/maps",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Typed Canvas and Three.js maps for Chilean geographic analytics",
   "author": "Eli-ezer Reuven Ramirez Ruiz",
   "license": "MIT",

@@ -4,6 +4,18 @@ All notable changes to this project will be documented here. The format follows 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-02
+
+### Added
+
+- Production `1.0.0` stable release of `@chile-geo/maps`, `@chile-geo/data-geojson`, and `@chile-geo/data-topojson`.
+- Automated GitHub Actions deployment workflow (`deploy-docs.yml`) for VitePress documentation on GitHub Pages.
+
+### Changed
+
+- Configured VitePress base path to `/chile-geo/` for GitHub Pages hosting.
+- Purged `ROADMAP.md` and all public roadmap references across the project and git history.
+
 ## [0.9.0] - 2026-09-01
 
 ### Added

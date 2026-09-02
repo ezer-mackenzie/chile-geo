@@ -4,6 +4,7 @@ export default defineConfig({
   title: 'Chile Geo',
   description: 'Typed 2D and 3D geographic visualization for Chile',
   lang: 'en-US',
+  base: process.env.VITEPRESS_BASE || '/chile-geo/',
   cleanUrls: true,
   lastUpdated: true,
   ignoreDeadLinks: false,

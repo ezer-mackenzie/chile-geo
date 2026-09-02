@@ -43,3 +43,7 @@ No migration is required. The `/geography` entry now supports targeted feature, 
 ## From 0.8 to 0.9
 
 No consumer migration is required. This release hardens npm publication and rejects release tags that do not exactly match synchronized workspace versions.
+
+## From 0.9 to 1.0.0
+
+No consumer migration is required. Version 1.0.0 marks the production stable release with guaranteed public API stability.

@@ -2,7 +2,7 @@
 layout: home
 hero:
   name: Chile Geo
-  text: Typed geographic visualization for Chile — v0.9
+  text: Typed geographic visualization for Chile — v1.0.0
   tagline: Responsive Canvas 2D and Three.js 3D maps with bundled offline boundaries.
   actions:
     - theme: brand
@@ -20,6 +20,10 @@ features:
     details: Use bundled BCN-derived boundaries and strict TypeScript declarations.
 ---
 
-## Live Canvas example
+## Live 2D Canvas Example
 
 <ClientOnly><Map2DDemo /></ClientOnly>
+
+## Live 3D WebGL Example
+
+<ClientOnly><Map3DDemo /></ClientOnly>
